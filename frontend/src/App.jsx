@@ -1,11 +1,19 @@
 import './App.css'
-import Login from './pages/Login'
+import FirstPage from './pages/FirstPage'
+import RouterConfig from './config/RouterConfig'
+import Navbar from './components/Navbar'
+import PageContainer from './container/PageContainer'
 
 function App() {
 
   return (
     <div>
-      <Login/>
+      {/* 
+      <Navbar/>
+      <RouterConfig/>
+      */}
+      <FirstPage />
+
     </div>
   )
 }
