@@ -3,6 +3,8 @@ package com.ogrenci_bilgi_sistemi.entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ders {
+public class Ders {
 
     @Id
     @Column(name="Id")
@@ -36,10 +38,15 @@ public class ders {
 
     @Column(name = "Saat_Sayısı")
     private Integer saat_sayisi;
+
+    @Column(name = "alan_kisi_sayisi")
+    private Integer alan_kisi_sayisi;
     
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="Eklenme_Tarihi")
     private Date eklenme_tarihi;
  
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "Son_Güncelleme_Tarihi")
     private Date son_guncelleme_tarihi;
 
