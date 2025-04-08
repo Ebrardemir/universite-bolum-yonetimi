@@ -8,11 +8,12 @@ function App() {
 
   return (
     <div>
-      {/* 
-      <Navbar/>
-      <RouterConfig/>
-      */}
-      <FirstPage />
+
+      <Navbar />
+      <RouterConfig />
+
+      {/** <FirstPage />*/}
+
 
     </div>
   )

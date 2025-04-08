@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Lessons from '../components/Lessons';
 import Teachers from '../components/Teachers';
+import Classrooms from '../components/Class';
 
 const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 const hours = Array.from({ length: 13 }, (_, i) => {
@@ -20,8 +21,19 @@ function LessonTable() {
     const newSchedule = { ...schedule };
     if (!newSchedule[day]) newSchedule[day] = {};
     if (!newSchedule[day][hour]) newSchedule[day][hour] = [];
-    newSchedule[day][hour].push(data);
 
+    const lowerText = data.toLowerCase();
+    const isTeacher = ['kaplan kaplan', 'zeki', 'hakan'].includes(lowerText);
+    const isClassroom = ['amfi 1', 'amfi 2', '108', '106'].includes(lowerText);
+    const isLesson = !isTeacher && !isClassroom;
+
+    const type = isTeacher ? 'teacher' : isClassroom ? 'classroom' : 'lesson';
+
+    // Aynı türden zaten varsa ekleme
+    const alreadyExists = newSchedule[day][hour]?.some((item) => item.type === type);
+    if (alreadyExists) return;
+
+    newSchedule[day][hour].push({ text: data, type });
     setSchedule(newSchedule);
   };
 
@@ -39,24 +51,28 @@ function LessonTable() {
     setSchedule(newSchedule);
   };
 
-  const renderBadge = (text, index, day, hour) => {
-    const isTeacher = ['kaplan kaplan', 'zeki', 'hakan'].includes(text.toLowerCase());
+  const renderBadge = (item, index, day, hour) => {
+    let backgroundColor = '#fce4ec';
+    if (item.type === 'teacher') backgroundColor = '#e0f7fa';
+    if (item.type === 'classroom') backgroundColor = '#ede7f6';
+
     return (
       <div
         key={index}
         style={{
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: isTeacher ? '#e0f7fa' : '#fce4ec',
+          backgroundColor,
           color: '#333',
           padding: '4px 8px',
           borderRadius: '12px',
-          margin: '4px 0', // üstten alttan boşluk
+          margin: '4px 0',
           fontSize: '13px',
-          width: 'fit-content'
+          width: 'fit-content',
+          transition: 'all 0.2s ease-in-out'
         }}
       >
-        {text}
+        {item.text}
         <button
           onClick={() => handleRemove(day, hour, index)}
           style={{
@@ -76,12 +92,26 @@ function LessonTable() {
 
   return (
     <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '250px' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          width: '250px',
+          position: 'sticky',
+          top: '20px',
+          alignSelf: 'flex-start',
+          zIndex: 1
+        }}
+      >
         <div style={{ minHeight: '320px' }}>
           <Lessons />
         </div>
         <div style={{ minHeight: '320px' }}>
           <Teachers />
+        </div>
+        <div style={{ minHeight: '320px' }}>
+          <Classrooms />
         </div>
       </div>
 
@@ -89,9 +119,14 @@ function LessonTable() {
         <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: '700px', textAlign: 'center' }}>
           <thead>
             <tr>
-              <th style={cellStyle}>Saat</th>
+              <th style={{ ...cellStyle, borderTop: '1px solid #ccc', backgroundColor: '#f9f9f9', position: 'sticky', top: 0, zIndex: 2 }}>Saat</th>
               {days.map((day) => (
-                <th key={day} style={cellStyle}>{day}</th>
+                <th
+                  key={day}
+                  style={{ ...cellStyle, borderTop: '1px solid #ccc', backgroundColor: '#f9f9f9', position: 'sticky', top: 0, zIndex: 2 }}
+                >
+                  {day}
+                </th>
               ))}
             </tr>
           </thead>
@@ -107,10 +142,11 @@ function LessonTable() {
                     style={{
                       ...cellStyle,
                       backgroundColor: '#fff',
-                      position: 'relative'
+                      position: 'relative',
+                      transition: 'background-color 0.2s ease-in-out'
                     }}
                   >
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       {schedule[day]?.[hour]?.map((entry, index) => renderBadge(entry, index, day, hour))}
                     </div>
                   </td>
@@ -133,4 +169,3 @@ const cellStyle = {
 };
 
 export default LessonTable;
-
