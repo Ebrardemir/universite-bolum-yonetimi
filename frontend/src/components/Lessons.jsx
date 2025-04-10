@@ -1,10 +1,17 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-function Lessons() {
-  const lessons = ['Matematik 1', 'Fizik 1', 'Programlama Lab 1', "Lab2", "lab2", "lba3"];
+function Lessons({ lessonHours }) {
+  const lessons = useSelector((state) => state.schedule.data.dersler) || [];
 
   const handleDragStart = (e, lesson) => {
-    e.dataTransfer.setData('text/plain', lesson);
+    e.dataTransfer.setData(
+      'text/plain',
+      JSON.stringify({
+        text: lesson,
+        type: 'lesson'
+      })
+    );
   };
 
   return (
@@ -12,9 +19,8 @@ function Lessons() {
       style={{
         maxWidth: '400px',
         width: '100%',
-        height: '320px', // 🔹 Sabit yükseklik
-        overflowY: 'auto', // 🔹 Yüksekliği aşarsa scroll aktif olur
-        margin: '0px 0px',
+        height: '320px', // height fixed to avoid shrinking
+        overflowY: 'auto',
         padding: '5px',
         border: '1px solid #ccc',
         borderRadius: '8px',
@@ -23,11 +29,21 @@ function Lessons() {
         boxSizing: 'border-box',
       }}
     >
-      <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Dersler</h2>
+      <h3
+        style={{
+          textAlign: 'center',
+          marginBottom: '15px',
+          cursor: 'pointer',
+        }}
+      >
+        Dersler
+      </h3>
+
       <div>
-        {lessons.map((lesson) => (
+        {lessons.length === 0 && <p>Veri yok.</p>}
+        {lessons.map((lesson, i) => (
           <p
-            key={lesson}
+            key={i}
             draggable
             onDragStart={(e) => handleDragStart(e, lesson)}
             style={{
@@ -41,7 +57,7 @@ function Lessons() {
               userSelect: 'none',
             }}
           >
-            {lesson}
+            {lesson.dersAdi} ({lesson.alanKisiSayisi}) - Kalan Saat: {lessonHours[lesson.id] || 0}
           </p>
         ))}
       </div>
