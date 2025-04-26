@@ -1,0 +1,54 @@
+.panel-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /* Kartlar daha geniş */
+    gap: 24px;
+    padding: 32px;
+    max-height: 60vh;
+}
+
+.panel-card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.panel-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.panel-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #1f2937;
+}
+
+.panel-description {
+    font-size: 15px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.panel-button {
+    align-self: flex-start;
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.panel-button:hover {
+    background-color: #1e40af;
+}

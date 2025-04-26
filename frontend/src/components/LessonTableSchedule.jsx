@@ -74,7 +74,7 @@ const staticSchedule = {
     },
 };
 
-const TeacherSchedule = () => {
+const LessonTableSchedule = () => {
     const renderBadge = (item, index) => {
         let backgroundColor = '#fce4ec';
         let textToShow = '';
@@ -168,4 +168,4 @@ const cellStyle = {
     verticalAlign: 'top',
 };
 
-export default TeacherSchedule;
+export default LessonTableSchedule;
