@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Lessons from '../components/Lessons';
 import Teachers from '../components/Teachers';
 import Classrooms from '../components/Class';
+import { useDispatch, useSelector } from 'react-redux';
+import { postSchedule } from '../redux/slices/scheduleSlice';
+import { shallowEqual } from 'react-redux';
+
 
 const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 const hours = Array.from({ length: 13 }, (_, i) => {
@@ -10,36 +14,132 @@ const hours = Array.from({ length: 13 }, (_, i) => {
   return `${start.toString().padStart(2, '0')}:00 - ${end.toString().padStart(2, '0')}:00`;
 });
 
+
 function LessonTable() {
+  const dispatch = useDispatch();
+
   const [schedule, setSchedule] = useState({});
+  const [lessonHours, setLessonHours] = useState({});
+
+  const { loading, error, programContents } = useSelector((state) => state.schedule);
+  const dersler = useSelector((state) => state.schedule.data.dersler || [], shallowEqual);
+
+
+  useEffect(() => {
+    const initial = {};
+    dersler.forEach(d => {
+      initial[d.id] = d.saatSayisi || 0;
+    });
+    // Eğer veri aynıysa state'i güncelleme
+    if (JSON.stringify(initial) !== JSON.stringify(lessonHours)) {
+      setLessonHours(initial);
+    }
+  }, [dersler]);
+
+  useEffect(() => { //backendden gelen yapıyı tabloya dönüştürme kısmı
+    if (!programContents || programContents.length === 0) return;
+
+    const converted = {};
+
+    programContents.forEach((entry) => {
+      const saat = `${entry.baslangicSaati.slice(0, 5)} - ${entry.bitisSaati.slice(0, 5)}`;
+      const gun = entry.gun;
+
+      if (!converted[gun]) converted[gun] = {};
+      if (!converted[gun][saat]) converted[gun][saat] = [];
+
+      if (entry.dersAdi) {
+        converted[gun][saat].push({
+          type: 'lesson',
+          readonly: true,
+          text: {
+            dersAdi: entry.dersAdi,
+            alanKisiSayisi: entry.saatSayisi ?? 1 // varsa kişi sayısı
+          }
+        });
+      }
+
+      if (entry.isim && entry.soyisim) {
+        converted[gun][saat].push({
+          type: 'teacher',
+          readonly: true,
+          text: {
+            unvan: entry.unvan || '',
+            isim: entry.isim,
+            soyisim: entry.soyisim
+          }
+        });
+      }
+      if (entry.derslikAdi) {
+        converted[gun][saat].push({
+          type: 'classroom',
+          readonly: true,
+          text: {
+            derslikAdi: entry.derslikAdi,
+            kapasite: 50
+
+          }
+        });
+      }
+
+
+      // Eğer derslik verisi de geliyorsa burada ekleyebilirsin
+      // if (entry.derslikAdi) { ... }
+    });
+
+
+    setSchedule(converted);
+  }, [programContents]);
 
   const handleDrop = (e, day, hour) => {
     e.preventDefault();
-    const data = e.dataTransfer.getData('text/plain');
-    if (!data) return;
+    const rawData = e.dataTransfer.getData('text/plain');
+    if (!rawData) return;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(rawData);
+    } catch {
+      return;
+    }
+
+    const { text, type } = parsed;
+
+    if (type === 'lesson') {
+      const dersId = text.id;
+      if (!lessonHours[dersId] || lessonHours[dersId] <= 0) {
+        alert('Bu dersin tüm saatleri tabloya yerleştirildi.');
+        return;
+      }
+
+      setLessonHours(prev => ({
+        ...prev,
+        [dersId]: prev[dersId] - 1
+      }));
+    }
 
     const newSchedule = { ...schedule };
     if (!newSchedule[day]) newSchedule[day] = {};
     if (!newSchedule[day][hour]) newSchedule[day][hour] = [];
 
-    const lowerText = data.toLowerCase();
-    const isTeacher = ['kaplan kaplan', 'zeki', 'hakan'].includes(lowerText);
-    const isClassroom = ['amfi 1', 'amfi 2', '108', '106'].includes(lowerText);
-    const isLesson = !isTeacher && !isClassroom;
-
-    const type = isTeacher ? 'teacher' : isClassroom ? 'classroom' : 'lesson';
-
-    // Aynı türden zaten varsa ekleme
-    const alreadyExists = newSchedule[day][hour]?.some((item) => item.type === type);
+    const alreadyExists = newSchedule[day][hour].some((item) => item.type === type);
     if (alreadyExists) return;
 
-    newSchedule[day][hour].push({ text: data, type });
+    newSchedule[day][hour].push({ text, type });
     setSchedule(newSchedule);
+  };
+
+
+  const handleSubmit = () => {
+    dispatch(postSchedule(schedule))
+      .unwrap()
+      .then(() => alert('Program başarıyla gönderildi!'))
+      .catch((err) => alert('Hata oluştu: ' + err));
   };
 
   const handleRemove = (day, hour, index) => {
     const newSchedule = { ...schedule };
-    if (newSchedule[day] && newSchedule[day][hour]) {
+    if (newSchedule[day]?.[hour]) {
       newSchedule[day][hour].splice(index, 1);
       if (newSchedule[day][hour].length === 0) {
         delete newSchedule[day][hour];
@@ -53,9 +153,20 @@ function LessonTable() {
 
   const renderBadge = (item, index, day, hour) => {
     let backgroundColor = '#fce4ec';
-    if (item.type === 'teacher') backgroundColor = '#e0f7fa';
-    if (item.type === 'classroom') backgroundColor = '#ede7f6';
+    let textToShow = '';
 
+    if (item.type === 'teacher' && typeof item.text === 'object') {
+      backgroundColor = '#e0f7fa';
+      textToShow = `${item.text.unvan} ${item.text.isim} ${item.text.soyisim}`;
+    } else if (item.type === 'classroom' && typeof item.text === 'object') {
+      backgroundColor = '#ede7f6';
+      textToShow = `${item.text.derslikAdi} (${item.text.kapasite} kişilik)`;
+    } else if (item.type === 'lesson' && typeof item.text === 'object') {
+      backgroundColor = '#fce4ec';
+      textToShow = `${item.text.dersAdi} (${item.text.alanKisiSayisi} kişi)`;
+    } else {
+      textToShow = String(item.text); // fallback (güvenlik)
+    }
     return (
       <div
         key={index}
@@ -69,10 +180,10 @@ function LessonTable() {
           margin: '4px 0',
           fontSize: '13px',
           width: 'fit-content',
-          transition: 'all 0.2s ease-in-out'
+          transition: 'all 0.2s ease-in-out',
         }}
       >
-        {item.text}
+        {textToShow}
         <button
           onClick={() => handleRemove(day, hour, index)}
           style={{
@@ -81,80 +192,145 @@ function LessonTable() {
             border: 'none',
             color: 'red',
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
           }}
         >
-          ×
+
         </button>
       </div>
     );
   };
 
+
   return (
-    <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
+    <div>
       <div
         style={{
+          width: '97%',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          width: '250px',
-          position: 'sticky',
-          top: '20px',
-          alignSelf: 'flex-start',
-          zIndex: 1
+          justifyContent: 'flex-end',
+          padding: '20px',
+          paddingBottom: '0',
         }}
       >
-        <div style={{ minHeight: '320px' }}>
-          <Lessons />
-        </div>
-        <div style={{ minHeight: '320px' }}>
-          <Teachers />
-        </div>
-        <div style={{ minHeight: '320px' }}>
-          <Classrooms />
-        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          style={{
+            padding: '10px 20px',
+            fontSize: '14px',
+            backgroundColor: loading ? '#90caf9' : '#2196f3',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+          }}
+        >
+          {loading ? 'Kaydediliyor...' : 'Programı Kaydet'}
+        </button>
       </div>
 
-      <div style={{ overflowX: 'auto', flexGrow: 1 }}>
-        <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: '700px', textAlign: 'center' }}>
-          <thead>
-            <tr>
-              <th style={{ ...cellStyle, borderTop: '1px solid #ccc', backgroundColor: '#f9f9f9', position: 'sticky', top: 0, zIndex: 2 }}>Saat</th>
-              {days.map((day) => (
+      <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            width: '250px',
+            position: 'sticky',
+            top: '20px',
+            alignSelf: 'flex-start',
+            zIndex: 1,
+          }}
+        >
+          <Lessons lessonHours={lessonHours} />
+          <Teachers />
+          <Classrooms />
+        </div>
+
+        <div style={{ overflowX: 'auto', flexGrow: 1 }}>
+          <table
+            style={{
+              borderCollapse: 'collapse',
+              width: '100%',
+              minWidth: '700px',
+              textAlign: 'center',
+            }}
+          >
+            <thead>
+              <tr>
                 <th
-                  key={day}
-                  style={{ ...cellStyle, borderTop: '1px solid #ccc', backgroundColor: '#f9f9f9', position: 'sticky', top: 0, zIndex: 2 }}
+                  style={{
+                    ...cellStyle,
+                    borderTop: '1px solid #ccc',
+                    backgroundColor: '#f9f9f9',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2,
+                  }}
                 >
-                  {day}
+                  Saat
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {hours.map((hour, rowIdx) => (
-              <tr key={rowIdx}>
-                <td style={{ ...cellStyle, fontWeight: 'bold', backgroundColor: '#f2f2f2' }}>{hour}</td>
                 {days.map((day) => (
-                  <td
+                  <th
                     key={day}
-                    onDrop={(e) => handleDrop(e, day, hour)}
-                    onDragOver={(e) => e.preventDefault()}
                     style={{
                       ...cellStyle,
-                      backgroundColor: '#fff',
-                      position: 'relative',
-                      transition: 'background-color 0.2s ease-in-out'
+                      borderTop: '1px solid #ccc',
+                      backgroundColor: '#f9f9f9',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 2,
                     }}
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      {schedule[day]?.[hour]?.map((entry, index) => renderBadge(entry, index, day, hour))}
-                    </div>
-                  </td>
+                    {day}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {hours.map((hour, rowIdx) => (
+                <tr key={rowIdx}>
+                  <td
+                    style={{
+                      ...cellStyle,
+                      fontWeight: 'bold',
+                      backgroundColor: '#f2f2f2',
+                    }}
+                  >
+                    {hour}
+                  </td>
+                  {days.map((day) => (
+                    <td
+                      key={day}
+                      onDrop={(e) => handleDrop(e, day, hour)}
+                      onDragOver={(e) => e.preventDefault()}
+                      style={{
+                        ...cellStyle,
+                        backgroundColor: '#fff',
+                        position: 'relative',
+                        transition: 'background-color 0.2s ease-in-out',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {schedule[day]?.[hour]?.map((entry, index) =>
+                          renderBadge(entry, index, day, hour)
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -165,7 +341,7 @@ const cellStyle = {
   padding: '10px',
   minWidth: '100px',
   height: '60px',
-  verticalAlign: 'top'
+  verticalAlign: 'top',
 };
 
 export default LessonTable;

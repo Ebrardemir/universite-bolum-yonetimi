@@ -12,6 +12,7 @@ function RouterConfig() {
             <Route path='/home' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/course-schedule' element={<CourseSchedule />} />
+       
 
         </Routes>
     )

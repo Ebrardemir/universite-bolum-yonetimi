@@ -1,18 +1,22 @@
 import React from 'react'
 import SelectClass from '../components/SelectClass'
+import SelectTerm from '../components/SelectTerm'
 import PageContainer from '../container/PageContainer'
-import Lessons from '../components/Lessons'
-import Teachers from '../components/Teachers'
+
 import LessonTable from '../components/LessonTable'
+import GenerateScheduleButton from '../components/GenerateScheduleButton'
 
 function CourseSchedule() {
   return (
     <div>
       <PageContainer>
-        <SelectClass />
-   
+        <div style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+          <SelectClass /><SelectTerm /> <GenerateScheduleButton />
+        </div>
+
+
       </PageContainer>
-      <LessonTable/>
+      <LessonTable />
 
     </div>
   )
