@@ -1,0 +1,67 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Dikeyde ortala */
+    align-items: center;
+    /* Yatayda ortala */
+    height: 100vh;
+    /* Tüm ekranı kaplasın */
+    background-color: #f5f5f5;
+    /* Hafif gri arka plan */
+}
+
+.login-box {
+    background-color: white;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 450px;
+}
+
+.login_header {
+    padding: 5px;
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* YATAY ORTALAR */
+    justify-content: center;
+    /* DIKEY ORTALAMA (isteğe bağlı) */
+    width: 100%;
+
+}
+
+.buton {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    padding-left: 200px;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    /* ikonlar arası boşluk */
+    margin-top: 30px;
+    color: black;
+
+}
+
+.social-icons a {
+    color: inherit;
+    /* İkonun varsayılan rengini korur */
+    text-decoration: none;
+}
