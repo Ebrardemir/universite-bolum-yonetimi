@@ -1,7 +1,7 @@
 import React from 'react';
 import { panelConfig } from './PanelConfig';
 import { useNavigate } from 'react-router-dom';
-import '../css/Panel.css';
+import '../css/panel.css';
 
 const Panel = ({ role }) => {
     const navigate = useNavigate();

@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div>
-      <ExamSchedule />
+      {/*<ExamSchedule />*/}
       <RouterConfig />
       {/* <PanelPage /> */}
       {/* <LessonTableSchedule /> */}

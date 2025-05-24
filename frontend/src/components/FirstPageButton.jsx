@@ -2,7 +2,7 @@ import React from 'react'
 import { buttonData } from "../components/FirstPageData"
 import { buttonData2 } from "../components/FirstPageData"
 import { buttonData3 } from "../components/FirstPageData"
-import "../css/FirstPage.css";
+import "../css/firstPage.css";
 
 
 function FirstPageButton() {
