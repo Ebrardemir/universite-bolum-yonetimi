@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import KullaniciYetkilendirme from './KullaniciYetkilendirme';
 import '../../css/bolumbaskani/panelLayout.css';
 import logo from '../../images/kou.png';
+import BaskanSinavProgrami from './BaskanSinavProgrami';
+import BaskanDerslikPlan from './BaskanDerslikPlan';
 
 const BolumBaskaniPaneli = () => {
   const [aktifModul, setAktifModul] = useState('yetkilendirme');
@@ -11,9 +13,11 @@ const BolumBaskaniPaneli = () => {
       case 'yetkilendirme':
         return <KullaniciYetkilendirme />;
       case 'ders-programi':
-        return <div>Ders Programı Modülü (hazırlanıyor)</div>;
+        return  <div>Modül bulunamadı.</div>;
       case 'sinav-programi':
-        return <div>Sınav Programı Modülü (hazırlanıyor)</div>;
+        return  <BaskanSinavProgrami />;
+      case 'derslik-plan':
+        return  <BaskanDerslikPlan />;  
       default:
         return <div>Modül bulunamadı.</div>;
     }
@@ -30,6 +34,7 @@ const BolumBaskaniPaneli = () => {
           <li onClick={() => setAktifModul('ders-programi')}>📚 Ders Programı</li>
           <li onClick={() => setAktifModul('sinav-programi')}>📝 Sınav Programı</li>
           <li onClick={() => setAktifModul('oturma-duzeni')}>🪑 Sınav Oturma Düzeni</li>
+          <li onClick={() => setAktifModul('derslik-plan')}>🏫 Derslik Planı</li>
         </ul>
         
       </aside>

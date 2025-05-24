@@ -9,6 +9,7 @@ import ShowExamSeatPlanPage from '../pages/ShowExamSeatPlanPage'
 import BaskanDashboard from '../pages/bolumbaskani/BaskanDashboard';
 import KullaniciYetkilendirme from '../pages/bolumbaskani/KullaniciYetkilendirme';
 import BolumBaskaniPaneli from '../pages/bolumbaskani/BolumBaskaniPaneli';
+import BaskanSinavProgrami from '../pages/bolumbaskani/BaskanSinavProgrami';
 
 
 function RouterConfig() {
@@ -23,6 +24,7 @@ function RouterConfig() {
             <Route path="/baskan" element={<BaskanDashboard />} />
             <Route path="/baskan-yetki" element={<KullaniciYetkilendirme />} />
             <Route path="/bolum-panel" element={<BolumBaskaniPaneli />} />
+            <Route path="/baskan-sinav-programi" element={<BaskanSinavProgrami />} />
 
 
 
