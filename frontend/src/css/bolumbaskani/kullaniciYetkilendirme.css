@@ -1,0 +1,161 @@
+.kullanici-yonetimi-container {
+    padding: 2rem;
+    font-family: 'Segoe UI', sans-serif;
+    max-width: 900px;
+    margin-left: 2rem;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+  }
+  
+  h2 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  input, select {
+    padding: 0.5rem 0.75rem;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    background-color: #004e89;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 38px;
+  }
+  
+  button:hover {
+    background-color: #0066b2;
+  }
+  
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .user-table th,
+  .user-table td {
+    border: 1px solid #ddd;
+    padding: 0.6rem;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #f4f6f8;
+    color: #2c3e50;
+  }
+  
+  .sil {
+    background-color: #e74c3c;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    color: white;
+    border: none;
+  }
+  
+  .sil:hover {
+    background-color: #c0392b;
+  }
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .kaydet {
+    background-color: #27ae60;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    color: white;
+    border: none;
+  }
+  
+  .kaydet:hover {
+    background-color: #1e8449;
+  }
+  
+  .duzenle {
+    background-color: #3498db;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    color: white;
+    border: none;
+  }
+  
+  .duzenle:hover {
+    background-color: #2980b9;
+  }
+  .ekle-button {
+    background-color: #004e89;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    height: 38px;
+    padding: 0 1rem;
+    cursor: pointer;
+  }
+  
+  .ekle-button:hover {
+    background-color: #0066b2;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+  
+  .kaydet {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+  }
+  
+  .kaydet:hover {
+    background-color: #1e8449;
+  }
+  
+  .duzenle {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+  }
+  
+  .duzenle:hover {
+    background-color: #2980b9;
+  }
+  
+  .modul-yetki-info {
+    margin-top: 2rem;
+    background-color: #eef5f1;
+    padding: 1rem;
+    border-left: 4px solid #006633;
+    border-radius: 6px;
+  }
