@@ -10,6 +10,8 @@ import BaskanDashboard from '../pages/bolumbaskani/BaskanDashboard';
 import KullaniciYetkilendirme from '../pages/bolumbaskani/KullaniciYetkilendirme';
 import BolumBaskaniPaneli from '../pages/bolumbaskani/BolumBaskaniPaneli';
 import BaskanSinavProgrami from '../pages/bolumbaskani/BaskanSinavProgrami';
+import BaskanSinavDuzenle from '../pages/bolumbaskani/BaskanSinavProgramiDuzenle'; 
+import BaskanSinavDetay from '../pages/bolumbaskani/BaskanSinavDetay';
 
 
 function RouterConfig() {
@@ -25,6 +27,9 @@ function RouterConfig() {
             <Route path="/baskan-yetki" element={<KullaniciYetkilendirme />} />
             <Route path="/bolum-panel" element={<BolumBaskaniPaneli />} />
             <Route path="/baskan-sinav-programi" element={<BaskanSinavProgrami />} />
+            <Route path="/sinav-programi/:sinavId" element={<BaskanSinavDuzenle />} />
+            <Route path="/sinav-detay/:sinavId" element={<BaskanSinavDetay />} />
+            
 
 
 
