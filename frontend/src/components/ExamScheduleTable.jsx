@@ -25,7 +25,7 @@ const ExamScheduleTable = ({ exams }) => {
                         <td style={tdStyle}>{exam.classroom}</td>
                         <td style={tdStyle}>{exam.teacher}</td>
                         <td style={tdStyle}>
-                            <button onClick={() => navigate("/sinav-oturma-duzeni-goruntule", { state: exam })} style={buttonStyle}>Görüntüle</button>
+                            <button onClick={() => navigate("/baskan-sinav-oturma-duzeni-goruntule", { state: exam })} style={buttonStyle}>Görüntüle</button>
                         </td>
                     </tr>
                 ))}

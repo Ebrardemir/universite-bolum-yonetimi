@@ -1,5 +1,7 @@
-import React from 'react';
-import "../css/kapiIsimligiPrint.css"
+import React, { useState, useEffect } from 'react';
+import "../css/akademikpersonel/kapiIsimligiPrint.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 const hours = Array.from({ length: 9 }, (_, i) => {
@@ -8,73 +10,51 @@ const hours = Array.from({ length: 9 }, (_, i) => {
     return `${start.toString().padStart(2, '0')}:00 - ${end.toString().padStart(2, '0')}:00`;
 });
 
-// Sadece örnek static veri
-const staticSchedule = {
-    Pazartesi: {
-        '08:00 - 09:00': [
-            {
-                type: 'lesson',
-                text: { dersAdi: 'Veri Yapıları', alanKisiSayisi: 2 },
-            },
-            {
-                type: 'teacher',
-                text: { unvan: 'Dr.', isim: 'Ahmet', soyisim: 'Yılmaz' },
-            },
-            {
-                type: 'classroom',
-                text: { derslikAdi: 'B201', kapasite: 50 },
-            },
-        ],
-    },
-    Salı: {
-        '10:00 - 11:00': [
-            {
-                type: 'lesson',
-                text: { dersAdi: 'Algoritmalar', alanKisiSayisi: 1 },
-            },
-            {
-                type: 'teacher',
-                text: { unvan: 'Prof.', isim: 'Mehmet', soyisim: 'Kara' },
-            },
-            {
-                type: 'classroom',
-                text: { derslikAdi: 'A101', kapasite: 50 },
-            },
-        ],
-        '13:00 - 14:00': [
-            {
-                type: 'lesson',
-                text: { dersAdi: 'Web Programlama', alanKisiSayisi: 1 },
-            },
-            {
-                type: 'teacher',
-                text: { unvan: 'Doç.', isim: 'Elif', soyisim: 'Demir' },
-            },
-            {
-                type: 'classroom',
-                text: { derslikAdi: 'C303', kapasite: 50 },
-            },
-        ],
-    },
-    Perşembe: {
-        '09:00 - 10:00': [
-            {
-                type: 'lesson',
-                text: { dersAdi: 'Yapay Zeka', alanKisiSayisi: 1 },
-            },
-            {
-                type: 'teacher',
-                text: { unvan: 'Arş. Gör.', isim: 'Zeynep', soyisim: 'Şahin' },
-            },
-            {
-                type: 'classroom',
-                text: { derslikAdi: 'D404', kapasite: 50 },
-            },
-        ],
-    },
-};
-
 const LessonTableSchedule = () => {
+    const [schedule, setSchedule] = useState({});
+    const görevliId = 3;
+
+    useEffect(() => {
+        const fetchSchedule = async () => {
+            try {
+                const response = await fetch(
+                    `${API_URL}/rest/api/ders-programi-icerik/kapi-isimligi/${görevliId}`,
+                    {
+                        headers: {
+                            'ngrok-skip-browser-warning': '69420',
+                        },
+                    }
+                );
+                const data = await response.json();
+
+                const formatted = {};
+                data.forEach(item => {
+                    const gun = item.gun;
+                    const hour = `${item.baslangicSaati.substring(0, 5)} - ${item.bitisSaati.substring(0, 5)}`;
+
+                    if (!formatted[gun]) {
+                        formatted[gun] = {};
+                    }
+                    if (!formatted[gun][hour]) {
+                        formatted[gun][hour] = [];
+                    }
+
+                    formatted[gun][hour].push(
+                        { type: 'lesson', text: { dersAdi: item.dersAdi } },
+                        { type: 'teacher', text: { unvan: item.unvan, isim: item.isim, soyisim: item.soyisim } },
+                        { type: 'classroom', text: { derslikAdi: item.derslikAdi } }
+                    );
+                });
+
+                setSchedule(formatted);
+            } catch (error) {
+                console.error('API çağrısı hatası:', error);
+            }
+        };
+
+        fetchSchedule();
+    }, [görevliId]);
+
     const renderBadge = (item, index) => {
         let backgroundColor = '#fce4ec';
         let textToShow = '';
@@ -84,10 +64,10 @@ const LessonTableSchedule = () => {
             textToShow = `${item.text.unvan} ${item.text.isim} ${item.text.soyisim}`;
         } else if (item.type === 'classroom') {
             backgroundColor = '#ede7f6';
-            textToShow = `${item.text.derslikAdi} (${item.text.kapasite} kişilik)`;
+            textToShow = `${item.text.derslikAdi}`;
         } else if (item.type === 'lesson') {
             backgroundColor = '#fce4ec';
-            textToShow = `${item.text.dersAdi} (${item.text.alanKisiSayisi} kişi)`;
+            textToShow = `${item.text.dersAdi}`;
         }
 
         return (
@@ -134,7 +114,7 @@ const LessonTableSchedule = () => {
                 <thead>
                     <tr>
                         <th style={cellStyle}>Saat</th>
-                        {days.map((day) => (
+                        {days.map(day => (
                             <th key={day} style={cellStyle}>{day}</th>
                         ))}
                     </tr>
@@ -143,10 +123,10 @@ const LessonTableSchedule = () => {
                     {hours.map((hour, rowIdx) => (
                         <tr key={rowIdx}>
                             <td style={{ ...cellStyle, fontWeight: 'bold' }}>{hour}</td>
-                            {days.map((day) => (
+                            {days.map(day => (
                                 <td key={day + hour} style={cellStyle}>
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        {staticSchedule[day]?.[hour]?.map((entry, index) =>
+                                        {schedule[day]?.[hour]?.map((entry, index) =>
                                             renderBadge(entry, index)
                                         )}
                                     </div>

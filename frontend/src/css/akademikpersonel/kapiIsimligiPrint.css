@@ -1,0 +1,30 @@
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    html,
+    body {
+        zoom: 0.72;
+        /* okunabilir ve tek sayfaya sığacak şekilde ölçekleme */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    table {
+        page-break-inside: avoid;
+        width: 100%;
+        font-size: 10px;
+    }
+
+    th,
+    td {
+        padding: 6px !important;
+        font-size: 10px !important;
+    }
+}

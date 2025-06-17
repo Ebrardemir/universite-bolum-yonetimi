@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const fetchClassrooms = createAsyncThunk('classrooms/fetchClassrooms', async () => {
-    const response = await axios.get('https://73b5-176-89-100-83.ngrok-free.app/rest/api/derslik/getir-all', {
+    const response = await axios.get(`${API_URL}/rest/api/derslik/getir-all`, {
         headers: {
             'ngrok-skip-browser-warning': '69420'
         }

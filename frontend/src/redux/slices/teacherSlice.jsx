@@ -1,13 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const fetchTeachers = createAsyncThunk('teachers/fetchTeachers', async () => {
-    const response = await axios.get('https://73b5-176-89-100-83.ngrok-free.app/rest/api/gorevli/ogretim-elemanlari-list', {
+    const response = await axios.get(`${API_URL}/rest/api/gorevli/ogretim-elemanlari-list`, {
         headers: {
             'ngrok-skip-browser-warning': '69420'
         }
     });
-   
+
     console.log("BACKEND'DEN GELEN:", response.data);
     return response.data;
 });

@@ -10,7 +10,7 @@ const BaskanSinavProgrami = () => {
   const [loading, setLoading] = useState(true);
   const [hata, setHata] = useState(null);
   useEffect(() => {
-    fetch("https://4c14-5-24-197-23.ngrok-free.app/rest/api/sinav-table/1/getir/list", {
+    fetch(`${API_URL}/rest/api/sinav-table/1/getir/list`, {
       headers: { 'ngrok-skip-browser-warning': '69420' }
     })
       .then(async (res) => {

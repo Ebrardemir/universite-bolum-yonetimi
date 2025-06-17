@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 export const fetchLessons = createAsyncThunk(
     'schedule/fetchLessons',
     async ({ sinif, donem, bolumId }, thunkAPI) => {
       try {
-        const response = await fetch('https://.../rest/api/ders/bolum-ders-list', {
+        const response = await fetch(`${API_URL}/rest/api/ders/bolum-ders-list`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sinif, donem, bolumId })

@@ -1,0 +1,105 @@
+.baskan-derslik-container {
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .derslik-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .derslik-table th,
+  .derslik-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: center;
+  }
+  
+  .derslik-table th {
+    background-color: #f4f6f8;
+    color: #333;
+  }
+  
+  .detay-btn {
+    background-color: #006633;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .detay-btn:hover {
+    background-color: #008844;
+  }
+  
+  .kullanim-block {
+    margin-top: 2rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+  }
+  
+  .gun-block {
+    margin-top: 1rem;
+  }
+  
+  .slot-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  
+  .slot {
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .slot.dolu {
+    background-color: #c0392b;
+  }
+  
+  .slot.bos {
+    background-color: #27ae60;
+  }
+  .planlama-form {
+    margin: 2rem auto;
+    padding: 1rem;
+    max-width: 500px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #006633;
+    border-radius: 6px;
+  }
+  
+  .planlama-form h4 {
+    margin-bottom: 1rem;
+  }
+  
+  .planlama-form input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .planlama-form button {
+    background-color: #006633;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .planlama-form button:hover {
+    background-color: #008844;
+  }
+  
+  
