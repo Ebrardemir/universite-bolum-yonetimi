@@ -17,7 +17,7 @@ import BaskanSinavDetay from '../pages/bolumbaskani/BaskanSinavDetay';
 function RouterConfig() {
     return (
         <Routes>
-         
+
             <Route path='/home' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/course-schedule' element={<CourseSchedule />} />
