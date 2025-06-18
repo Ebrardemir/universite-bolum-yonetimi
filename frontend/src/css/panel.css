@@ -3,8 +3,9 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     /* Kartlar daha geniş */
     gap: 24px;
-    padding: 32px;
-    max-height: 60vh;
+    padding-right: 32px;
+    padding-left: 32px;
+    max-height: 100vh;
 }
 
 .panel-card {

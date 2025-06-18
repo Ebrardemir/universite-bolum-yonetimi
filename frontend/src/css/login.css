@@ -43,12 +43,36 @@ html {
 
 }
 
+.custom-button {
+    background-color: #40af40 !important;
+
+    color: black !important;
+
+    text-transform: none !important;
+
+    padding: 12px 32px !important;
+
+    font-size: 1.1rem !important;
+
+}
+
+.custom-button:hover {
+    background-color: #297729 !important;
+
+}
+
 .buton {
     display: flex;
     justify-content: center;
     margin-top: 30px;
-    padding-left: 200px;
 }
+
+.butonDiv {
+    margin-top: 30px;
+}
+
+
+
 
 .social-icons {
     display: flex;

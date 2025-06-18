@@ -19,7 +19,7 @@ public class DersProgramiController implements IDersProgramiController{
     private IDersProgramiService dersProgramiService;
 
     @Override
-    @PutMapping(path = "/save")
+    @PostMapping(path = "/save")
     public DtoDersProgrami saveDersProgrami(@RequestBody DtoDersProgramiIU dersProgrami) {
         return dersProgramiService.saveDersProgrami(dersProgrami);
     }

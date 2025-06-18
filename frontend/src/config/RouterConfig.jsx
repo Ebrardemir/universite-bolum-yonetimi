@@ -17,6 +17,7 @@ import BaskanSinavProgrami from '../pages/bolumbaskani/BaskanSinavProgrami';
 import BaskanSinavDuzenle from '../pages/bolumbaskani/BaskanSinavProgramiDuzenle';
 import BaskanSinavDetay from '../pages/bolumbaskani/BaskanSinavDetay';
 import OturmaDuzeniDuzenle from "../pages/bolumbaskani/BaskanOturmaDuzeniDuzenle";
+import BaskanDerslikDetay from '../pages/bolumbaskani/BaskanDerslikDetay';
 
 /* Akademik Personel */
 import AkademikDashboard from '../pages/akademikpersonel/AkademikDash'
@@ -55,6 +56,7 @@ function RouterConfig() {
             <Route path="/sinav-programi/:sinavId" element={<BaskanSinavDuzenle />} />
             <Route path="/sinav-detay/:sinavId" element={<BaskanSinavDetay />} />
             <Route path="/oturma-duzeni-duzenle/:sinavAltId" element={<OturmaDuzeniDuzenle />} />
+            <Route path="/baskan-derslik-detay/:id" element={<BaskanDerslikDetay />} />
 
             {/* Akademik Personel */}
             <Route path='/akademik-personel' element={<AkademikDashboard />} />

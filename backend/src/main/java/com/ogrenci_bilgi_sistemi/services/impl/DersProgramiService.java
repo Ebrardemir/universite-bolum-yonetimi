@@ -42,28 +42,31 @@ public class DersProgramiService implements IDersProgramiService {
 
     @Override
     public DtoDersProgrami saveDersProgrami(DtoDersProgramiIU dto) {
-        // 1️⃣ Var mı kontrol et
+        System.out.println("Kontrol ediliyor: " + dto.getBolumId() + "-" + dto.getSinif() + "-" + dto.getDonem());
+
         Optional<ders_programi> existing = dersProgramiRepository.findByBolumIdAndSinifAndDonem(
                 dto.getBolumId(),
                 dto.getSinif(),
                 dto.getDonem()
         );
 
+        System.out.println("Var mı? " + existing.isPresent());
+
         if (existing.isPresent()) {
-            // ✅ Zaten varsa: hata fırlat
-            throw new RuntimeException("Bu ders programı zaten mevcut!");
+            throw new RuntimeException("Bu ders programı zaten mevcut11!");
         }
 
-        // 2️⃣ Yoksa yeni oluştur
         ders_programi dersProgramiEntity = new ders_programi();
         BeanUtils.copyProperties(dto, dersProgramiEntity);
+        dersProgramiEntity.setId(null);
+
         dersProgramiEntity = dersProgramiRepository.save(dersProgramiEntity);
 
-        // 3️⃣ DTO'ya çevir ve dön
         DtoDersProgrami result = new DtoDersProgrami();
         BeanUtils.copyProperties(dersProgramiEntity, result);
         return result;
     }
+
 
 
 

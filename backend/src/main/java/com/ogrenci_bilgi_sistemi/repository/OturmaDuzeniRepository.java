@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ogrenci_bilgi_sistemi.entities.oturma_duzeni;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OturmaDuzeniRepository extends JpaRepository<oturma_duzeni, Integer>{
@@ -12,5 +13,9 @@ public interface OturmaDuzeniRepository extends JpaRepository<oturma_duzeni, Int
     boolean existsBySinavId(Integer sinavId);
 
     List<oturma_duzeni> findBySinavId(Integer sinavId);
+
+    List<oturma_duzeni> findByOgrenciId(Integer ogrenciId);
+
+
 
 }

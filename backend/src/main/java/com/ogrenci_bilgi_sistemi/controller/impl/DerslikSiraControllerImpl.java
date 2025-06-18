@@ -2,6 +2,7 @@ package com.ogrenci_bilgi_sistemi.controller.impl;
 
 import com.ogrenci_bilgi_sistemi.controller.Icontroller.IDerslikSiraController;
 import com.ogrenci_bilgi_sistemi.dto.DTO.DtoDerslikSira;
+import com.ogrenci_bilgi_sistemi.dto.DtoIU.DtoOturmaDuzeniIU;
 import com.ogrenci_bilgi_sistemi.services.Iservices.IDerslikSiraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,4 +24,5 @@ public class DerslikSiraControllerImpl implements IDerslikSiraController {
     public List<DtoDerslikSira> derslikSiraList(@PathVariable(name="derslikId") Integer derslikId) {
         return derslikSiraService.derslikSiraList(derslikId);
     }
+
 }

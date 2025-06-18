@@ -99,6 +99,33 @@ const OturmaDuzeniKroki = () => {
         setDuzenList(newDuzen);
     };
 
+    const handleSaveLayout = async () => {
+        if (pendingList.length > 0) {
+            alert("Bekleme alanında öğrenci var! Lütfen hepsini yerleştirin.");
+            return;
+        }
+
+        const payload = duzenList.map((o) => ({
+            id: o.id, // Eğer id varsa gönder, yoksa backend ignore eder
+            ogrenciId: o.ogrenciId,
+            derslikId: o.derslikId,
+            siraNo: o.siraNo,
+        }));
+
+        try {
+            await axios.put(
+                `${API_URL}/rest/api/oturma-duzeni/guncelle`,
+                payload,
+                { headers: { "ngrok-skip-browser-warning": "69420" } }
+            );
+            alert("Yeni oturma düzeni başarıyla kaydedildi!");
+        } catch (err) {
+            console.error("Kaydetme hatası:", err);
+            alert("Kaydetme sırasında bir hata oluştu!");
+        }
+    };
+
+
     const renderDerslikGrid = (derslikId, siralar) => {
         const derslikStudents = duzenList
             .filter((d) => d.derslikId === Number(derslikId))
@@ -198,6 +225,22 @@ const OturmaDuzeniKroki = () => {
         <DragDropContext onDragEnd={handleDragEnd}>
             <div style={{ textAlign: "center" }}>
                 <h1>Oturma Düzeni Kroki</h1>
+
+                <button
+                    onClick={handleSaveLayout}
+                    style={{
+                        padding: "10px 20px",
+                        marginBottom: "20px",
+                        background: "#007bff",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                    }}
+                >
+                    Kaydet
+                </button>
+
                 <div
                     style={{
                         border: "2px dashed #999",

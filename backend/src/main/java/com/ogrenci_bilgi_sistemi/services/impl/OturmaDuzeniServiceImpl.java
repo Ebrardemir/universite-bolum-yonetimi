@@ -3,10 +3,14 @@ package com.ogrenci_bilgi_sistemi.services.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.ogrenci_bilgi_sistemi.dto.DTO.DtoOturmaDuzeniOgrenciList;
+import com.ogrenci_bilgi_sistemi.dto.DtoIU.DtoOturmaDuzeniIU;
 import com.ogrenci_bilgi_sistemi.entities.*;
 import com.ogrenci_bilgi_sistemi.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -174,5 +178,43 @@ public class OturmaDuzeniServiceImpl implements IOturmaDuzeniService {
 
         return dtoList;
     }
+
+    @Override
+    @Transactional
+    public List<DtoOturmaDuzeniOgrenciList> oturmaDuzeniGuncelle(List<DtoOturmaDuzeniIU> dtoOturmaDuzeniIUS) {
+        List<oturma_duzeni> updatedEntities = new ArrayList<>();
+
+        for (DtoOturmaDuzeniIU dto : dtoOturmaDuzeniIUS) {
+            List<oturma_duzeni> existingList = oturmaDuzeniRepository.findByOgrenciId(dto.getOgrenciId());
+
+            if (!existingList.isEmpty()) {
+                // İlk kaydı güncelle
+                oturma_duzeni entity = existingList.get(0);
+                entity.setDerslikId(dto.getDerslikId());
+                entity.setSiraNo(dto.getSiraNo());
+                updatedEntities.add(entity);
+            } else {
+                oturma_duzeni entity = new oturma_duzeni();
+                entity.setOgrenciId(dto.getOgrenciId());
+                entity.setDerslikId(dto.getDerslikId());
+                entity.setSiraNo(dto.getSiraNo());
+                updatedEntities.add(entity);
+            }
+        }
+
+        List<oturma_duzeni> saved = oturmaDuzeniRepository.saveAll(updatedEntities);
+
+        return saved.stream()
+                .map(entity -> {
+                    DtoOturmaDuzeniOgrenciList dto = new DtoOturmaDuzeniOgrenciList();
+                    org.springframework.beans.BeanUtils.copyProperties(entity, dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
+
 
 }

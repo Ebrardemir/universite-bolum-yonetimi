@@ -6,6 +6,8 @@ import BaskanSinavProgrami from './BaskanSinavProgrami';
 import BaskanDerslikPlan from './BaskanDerslikPlan';
 import BaskanSinavDetay from './BaskanSinavDetay';
 import ShowExamSeatPlan from '../../components/ShowExamSeatPlan';
+import DersProgramiList from '../sekreter/DersProgramiList';
+
 
 const BolumBaskaniPaneli = () => {
     const [aktifModul, setAktifModul] = useState('yetkilendirme');
@@ -14,8 +16,8 @@ const BolumBaskaniPaneli = () => {
         switch (aktifModul) {
             case 'yetkilendirme':
                 return <KullaniciYetkilendirme />;
-            case 'ders-programi':
-                return <div>Modül bulunamadı.</div>;
+            case 'ders-programi-islemleri':
+                return <DersProgramiList />
             case 'sinav-programi':
                 return <BaskanSinavProgrami />;
             case 'derslik-plan':
@@ -33,7 +35,7 @@ const BolumBaskaniPaneli = () => {
                 <h3>Modüller</h3>
                 <ul>
                     <li onClick={() => setAktifModul('yetkilendirme')}>👥 Kullanıcı Yetkilendirme</li>
-                    <li onClick={() => setAktifModul('ders-programi')}>📚 Ders Programı</li>
+                    <li onClick={() => setAktifModul('ders-programi-islemleri')}>📚 Ders Programı</li>
                     <li onClick={() => setAktifModul('sinav-programi')}>📝 Sınav Programı</li>
                     <li onClick={() => setAktifModul('derslik-plan')}>🏫 Derslik Planı</li>
                 </ul>
