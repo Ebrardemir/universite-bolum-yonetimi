@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,8 +15,15 @@ export default function DersProgramiGoruntule() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // ✅ Yetki kontrolü
     const [yetkiliMi, setYetkiliMi] = useState(false);
+    const [programContents, setProgramContents] = useState([]);
+    const [schedule, setSchedule] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [notMap, setNotMap] = useState({}); // içerikId -> Not
+
+    // Modal state
+    const [showModal, setShowModal] = useState(false);
+    const [activeNoteText, setActiveNoteText] = useState('');
 
     useEffect(() => {
         const rolId = Number(localStorage.getItem('rolId'));
@@ -32,22 +40,31 @@ export default function DersProgramiGoruntule() {
         navigate('/');
     };
 
-    const [programContents, setProgramContents] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [schedule, setSchedule] = useState({});
-
     useEffect(() => {
         if (!yetkiliMi) return;
 
         const fetchProgram = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL}/rest/api/ders-programi-icerik/${id}/getir-list`, {
+                const res = await axios.get(`${API_URL}/rest/api/ders-programi-icerik/${id}/getir-list`, {
                     headers: { 'ngrok-skip-browser-warning': '69420' },
                 });
-                if (!response.ok) throw new Error('Veri çekilemedi');
-                const data = await response.json();
+                const data = res.data || [];
                 setProgramContents(data);
+
+                // Notları da getir
+                const map = {};
+                await Promise.all(data.map(async item => {
+                    const notRes = await axios.get(`${API_URL}/rest/api/not/${item.id}/getir-ders-programi`, {
+                        headers: { "ngrok-skip-browser-warning": "69420" }
+                    });
+                    const notes = notRes.data || [];
+                    if (notes.length > 0) {
+                        map[item.id] = notes[0]; // her içerik için 1 not
+                    }
+                }));
+                setNotMap(map);
+
             } catch (err) {
                 console.error('Hata:', err);
             } finally {
@@ -71,30 +88,32 @@ export default function DersProgramiGoruntule() {
             if (!converted[gun]) converted[gun] = {};
             if (!converted[gun][saat]) converted[gun][saat] = [];
 
-            if (entry.dersAdi) {
-                converted[gun][saat].push({
-                    type: 'lesson',
-                    text: `${entry.dersAdi}`
-                });
-            }
-            if (entry.isim && entry.soyisim) {
-                converted[gun][saat].push({
-                    type: 'teacher',
-                    text: `${entry.unvan} ${entry.isim} ${entry.soyisim}`
-                });
-            }
-            if (entry.derslikAdi) {
-                converted[gun][saat].push({
-                    type: 'classroom',
-                    text: `${entry.derslikAdi}`
-                });
-            }
+            converted[gun][saat].push({
+                dersProgramiIcerikId: entry.id,
+                dersAdi: entry.dersAdi,
+                unvan: entry.unvan,
+                isim: entry.isim,
+                soyisim: entry.soyisim,
+                derslikAdi: entry.derslikAdi
+            });
         });
 
         setSchedule(converted);
     }, [programContents]);
 
-    // ✅ Yetkisizse uyarı + buton
+    const openNoteModal = (icerikId) => {
+        const note = notMap[icerikId];
+        if (note) {
+            setActiveNoteText(note.gorevliNot);
+            setShowModal(true);
+        }
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setActiveNoteText('');
+    };
+
     if (!yetkiliMi) {
         return (
             <div style={{ textAlign: 'center', marginTop: '100px' }}>
@@ -122,34 +141,31 @@ export default function DersProgramiGoruntule() {
                     }}>
                         <thead>
                             <tr>
-                                <th style={{ ...cellStyle, backgroundColor: '#f0f0f0', fontSize: '16px', textAlign: 'center', verticalAlign: 'middle' }}>Saat</th>
+                                <th style={thStyle}>Saat</th>
                                 {days.map(day => (
-                                    <th key={day} style={{ ...cellStyle, backgroundColor: '#f0f0f0', fontSize: '16px', textAlign: 'center', verticalAlign: 'middle' }}>{day}</th>
+                                    <th key={day} style={thStyle}>{day}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {hours.map((hour, rowIdx) => (
                                 <tr key={rowIdx}>
-                                    <td style={{
-                                        ...cellStyle,
-                                        fontWeight: 'bold',
-                                        backgroundColor: '#fafafa',
-                                        fontSize: '15px',
-                                        textAlign: 'center',
-                                        verticalAlign: 'middle'
-                                    }}>
-                                        {hour}
-                                    </td>
+                                    <td style={thStyle}>{hour}</td>
                                     {days.map(day => (
-                                        <td key={day} style={{ ...cellStyle, textAlign: 'center', verticalAlign: 'middle' }}>
+                                        <td key={day} style={tdStyle}>
                                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                                 {schedule[day]?.[hour]?.map((entry, index) => (
-                                                    <div key={index} style={{
-                                                        margin: '2px 0',
-                                                        fontSize: '13px',
-                                                    }}>
-                                                        {entry.text}
+                                                    <div key={index} style={{ margin: '2px 0', fontSize: '13px', textAlign: 'center' }}>
+                                                        <div>{entry.dersAdi}</div>
+                                                        <div>{`${entry.unvan} ${entry.isim} ${entry.soyisim}`}</div>
+                                                        <div>{entry.derslikAdi}</div>
+                                                        {notMap[entry.dersProgramiIcerikId] && (
+                                                            <button
+                                                                onClick={() => openNoteModal(entry.dersProgramiIcerikId)}
+                                                                style={{ marginTop: '4px', fontSize: '12px', padding: '2px 6px' }}>
+                                                                Notu Görüntüle
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -161,15 +177,52 @@ export default function DersProgramiGoruntule() {
                     </table>
                 </div>
             )}
+
+            {showModal && (
+                <div style={modalOverlayStyle}>
+                    <div style={modalContentStyle}>
+                        <h3>Not Detayı</h3>
+                        <p>{activeNoteText}</p>
+                        <button onClick={closeModal} style={{ marginTop: "20px" }}>Kapat</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
-const cellStyle = {
+const thStyle = {
     border: '1px solid #ccc',
     padding: '8px',
-    minWidth: '80px',
-    height: '50px',
+    backgroundColor: '#f0f0f0',
     textAlign: 'center',
     verticalAlign: 'middle',
+    fontWeight: 'bold',
+    minWidth: '100px'
+};
+
+const tdStyle = {
+    border: '1px solid #ccc',
+    padding: '8px',
+    textAlign: 'center',
+    verticalAlign: 'middle',
+    minWidth: '100px'
+};
+
+const modalOverlayStyle = {
+    position: "fixed",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999
+};
+
+const modalContentStyle = {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "400px",
+    maxWidth: "90%"
 };

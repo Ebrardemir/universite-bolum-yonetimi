@@ -9,57 +9,64 @@ const BaskanSinavDetay = () => {
     const { sinavId } = useParams();
     const navigate = useNavigate();
 
-    // ✅ Yetki kontrolü için state
     const [yetkiliMi, setYetkiliMi] = useState(false);
+    const [veriler, setVeriler] = useState([]);
+    const [hata, setHata] = useState(null);
+    const [notMap, setNotMap] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [activeNoteText, setActiveNoteText] = useState("");
 
     useEffect(() => {
-        const rolId = Number(localStorage.getItem('rolId'));
-        if (rolId === 1) {
-            setYetkiliMi(true);
-        } else {
-            setYetkiliMi(false);
-        }
+        const rolId = Number(localStorage.getItem("rolId"));
+        setYetkiliMi(rolId === 1);
     }, []);
 
     const handleLogoutAndRedirect = () => {
-        localStorage.removeItem('rolId');
-        localStorage.removeItem('userId');
-        navigate('/');
+        localStorage.clear();
+        navigate("/");
     };
-
-    const [veriler, setVeriler] = useState([]);
-    const [hata, setHata] = useState(null);
 
     useEffect(() => {
         if (!yetkiliMi) return;
 
-        axios
-            .get(`${API_URL}/rest/api/sinav/${sinavId}/listele`, {
-                headers: { "ngrok-skip-browser-warning": "69420" },
-            })
-            .then((res) => setVeriler(res.data))
-            .catch((err) => {
+        const fetchData = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/rest/api/sinav/${sinavId}/listele`, {
+                    headers: { "ngrok-skip-browser-warning": "69420" },
+                });
+                const data = res.data || [];
+                setVeriler(data);
+
+                const map = {};
+                await Promise.all(
+                    data.map(async (item) => {
+                        const notRes = await axios.get(`${API_URL}/rest/api/not/${item.id}/getir-sinav`, {
+                            headers: { "ngrok-skip-browser-warning": "69420" },
+                        });
+                        const notes = notRes.data || [];
+                        if (notes.length > 0) {
+                            map[item.id] = notes[0];
+                        }
+                    })
+                );
+                setNotMap(map);
+            } catch (err) {
                 console.error(err);
                 setHata("Veri çekilemedi.");
-            });
+            }
+        };
+
+        fetchData();
     }, [sinavId, yetkiliMi]);
 
-    const handleGenelDuzenle = () => {
-        navigate(`/sinav-programi/${sinavId}`);
-    };
-
-    const handleOturmaDuzeni = (sinavAltId) => {
-        navigate(`/oturma-duzeni-duzenle/${sinavAltId}`);
-    };
+    const handleGenelDuzenle = () => navigate(`/sinav-programi/${sinavId}`);
+    const handleOturmaDuzeni = (sinavAltId) => navigate(`/oturma-duzeni-duzenle/${sinavAltId}`);
 
     const handleOtomatikOlustur = async (sinavAltId) => {
         try {
-            await axios.get(
-                `${API_URL}/rest/api/oturma-duzeni/olustur/${sinavAltId}`,
-                {
-                    headers: { "ngrok-skip-browser-warning": "69420" },
-                }
-            );
+            await axios.get(`${API_URL}/rest/api/oturma-duzeni/olustur/${sinavAltId}`, {
+                headers: { "ngrok-skip-browser-warning": "69420" },
+            });
             alert("Otomatik oturma planı oluşturuldu!");
         } catch (err) {
             console.error(err);
@@ -67,14 +74,26 @@ const BaskanSinavDetay = () => {
         }
     };
 
-    // ✅ Yetkisizse uyarı ve buton
+    const openNoteModal = (itemId) => {
+        const note = notMap[itemId];
+        if (note) {
+            setActiveNoteText(note.gorevliNot);
+            setShowModal(true);
+        }
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setActiveNoteText("");
+    };
+
     if (!yetkiliMi) {
         return (
-            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+            <div style={{ textAlign: "center", marginTop: "100px" }}>
                 <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
                 <button
                     onClick={handleLogoutAndRedirect}
-                    style={{ padding: '10px 20px', marginTop: '20px' }}
+                    style={{ padding: "10px 20px", marginTop: "20px" }}
                 >
                     Girişe Git
                 </button>
@@ -102,7 +121,7 @@ const BaskanSinavDetay = () => {
                         <th>Tarih / Saat</th>
                         <th>Gözetmen</th>
                         <th>Derslik(ler)</th>
-                        <th>Oturma Planı</th>
+                        <th>İşlemler</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -116,9 +135,7 @@ const BaskanSinavDetay = () => {
                             <td>
                                 {item.sinavTarih}
                                 <br />
-                                <small>
-                                    {item.baslangicSaati} - {item.bitisSaati}
-                                </small>
+                                <small>{item.baslangicSaati} - {item.bitisSaati}</small>
                             </td>
                             <td>
                                 {item.gorevli
@@ -127,13 +144,19 @@ const BaskanSinavDetay = () => {
                             </td>
                             <td>
                                 {item.derslikler?.length > 0
-                                    ? item.derslikler
-                                        .map((d) => d.derslikAdi || `ID: ${d.id}`)
-                                        .join(", ")
+                                    ? item.derslikler.map(d => d.derslikAdi || `ID: ${d.id}`).join(", ")
                                     : "—"}
                             </td>
                             <td>
-                                <div className="action-buttons-inline">
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        flexWrap: "wrap",
+                                        gap: "10px",
+                                    }}
+                                >
                                     <button
                                         className="oturma-btn"
                                         onClick={() => handleOturmaDuzeni(item.id)}
@@ -146,14 +169,55 @@ const BaskanSinavDetay = () => {
                                     >
                                         🧠 Otomatik Oluştur
                                     </button>
+                                    {notMap[item.id] && (
+                                        <button
+                                            className="not-btn"
+                                            onClick={() => openNoteModal(item.id)}
+                                        >
+                                            📄 Notu Görüntüle
+                                        </button>
+                                    )}
                                 </div>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            {showModal && (
+                <div style={modalOverlayStyle}>
+                    <div style={modalContentStyle}>
+                        <h3>Not Detayı</h3>
+                        <p>{activeNoteText}</p>
+                        <button onClick={closeModal} style={{ marginTop: "20px" }}>
+                            Kapat
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default BaskanSinavDetay;
+
+const modalOverlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+};
+
+const modalContentStyle = {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "400px",
+    maxWidth: "90%",
+};

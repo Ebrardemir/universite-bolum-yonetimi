@@ -2,6 +2,7 @@ package com.ogrenci_bilgi_sistemi.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class NotServiceImpl implements INotService {
     private NotRepository notRepository;
 
     @Override
-    public DtoNot notSave(DtoNotIU dtoNotIU) {
+    public DtoNot notSaveSinav(DtoNotIU dtoNotIU) {
         not notEntity = new not();
         BeanUtils.copyProperties(dtoNotIU, notEntity); // Dto'dan Entity'ye kopyalama
 
@@ -33,7 +34,7 @@ public class NotServiceImpl implements INotService {
     }
 
     @Override
-    public List<DtoNot> notGetir(Integer sinavId) {
+    public List<DtoNot> notGetirSinav(Integer sinavId) {
         List<not> notList = notRepository.findBySinavId(sinavId); // Repo'dan veriyi çek
         List<DtoNot> dtoList = new ArrayList<>();
 
@@ -45,5 +46,48 @@ public class NotServiceImpl implements INotService {
 
         return dtoList;
     }
+
+    @Override
+    public DtoNot notSaveDersProgrami(DtoNotIU dtoNotIU) {
+        not notEntity = new not();
+        BeanUtils.copyProperties(dtoNotIU, notEntity);
+
+        // SINAV_ID boş kalabilir, burada dersProgramiIcerikId kullanılıyor
+        not dbNot = notRepository.save(notEntity);
+
+        DtoNot dto = new DtoNot();
+        BeanUtils.copyProperties(dbNot, dto);
+
+        return dto;
+    }
+
+    @Override
+    public DtoNot notGuncelle(Integer id, DtoNotIU dtoNotIU) {
+        not notEntity = notRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not bulunamadı"));
+
+        notEntity.setGorevliNot(dtoNotIU.getGorevliNot());
+        not updated = notRepository.save(notEntity);
+
+        DtoNot dto = new DtoNot();
+        BeanUtils.copyProperties(updated, dto);
+        return dto;
+    }
+
+
+    @Override
+    public List<DtoNot> notGetirDersProgrami(Integer dersProgramiId) {
+        List<not> notList = notRepository.findByDersProgramiIcerikId(dersProgramiId);
+        List<DtoNot> dtoList = new ArrayList<>();
+
+        for (not notEntity : notList) {
+            DtoNot dto = new DtoNot();
+            BeanUtils.copyProperties(notEntity, dto);
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
 
 }

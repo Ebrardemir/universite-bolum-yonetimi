@@ -184,4 +184,53 @@ public class SinavServiceImpl implements ISinavService {
         }
         sinavRepository.deleteAll(sinavlar);
     }
+
+    @Override
+    public List<DtoSinav> sinavListByGozetmenId(Integer gozetmenId) {
+        List<sinav> sinavList = sinavRepository.findByGozetmenId(gozetmenId);
+
+        List<DtoSinav> dtoList = new ArrayList<>();
+
+        for (sinav sinav : sinavList) {
+            DtoSinav dto = new DtoSinav();
+            BeanUtils.copyProperties(sinav, dto);
+
+            // ✏️ DERS
+            if (sinav.getDersId() != null) {
+                Ders dersEntity = dersRepository.findById(sinav.getDersId()).orElse(null);
+                if (dersEntity != null) {
+                    DtoDers dersDto = new DtoDers();
+                    BeanUtils.copyProperties(dersEntity, dersDto);
+                    dto.setDers(dersDto);
+                }
+            }
+
+            // ✏️ GÖREVLI
+            if (sinav.getGozetmenId() != null) {
+                gorevli gorevliEntity = gorevliRepository.findById(sinav.getGozetmenId()).orElse(null);
+                if (gorevliEntity != null) {
+                    DtoGorevli gorevliDto = new DtoGorevli();
+                    BeanUtils.copyProperties(gorevliEntity, gorevliDto);
+                    dto.setGorevli(gorevliDto);
+                }
+            }
+
+            // ✏️ DERSLIKLERS (Çoklu Liste!)
+            List<derslik> derslikEntities = sinav.getDerslikler(); // Eğer ManyToMany ise
+            if (derslikEntities != null && !derslikEntities.isEmpty()) {
+                List<DtoDerslik> derslikDtos = new ArrayList<>();
+                for (derslik derslikEntity : derslikEntities) {
+                    DtoDerslik derslikDto = new DtoDerslik();
+                    BeanUtils.copyProperties(derslikEntity, derslikDto);
+                    derslikDtos.add(derslikDto);
+                }
+                dto.setDerslikler(derslikDtos);
+            }
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
 }

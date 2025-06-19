@@ -21,11 +21,13 @@ import OturmaDuzeniDuzenle from "../pages/bolumbaskani/BaskanOturmaDuzeniDuzenle
 import BaskanDerslikDetay from '../pages/bolumbaskani/BaskanDerslikDetay';
 
 /* Akademik Personel */
-import AkademikDashboard from '../pages/akademikpersonel/AkademikDash';
-import AkademikPersonelPaneli from '../pages/akademikpersonel/AkademikPersonelPaneli';
-import DersProgrami from '../pages/akademikpersonel/CourseSchedule';
-import SinavProgrami from '../pages/akademikpersonel/ExamSchedule';
-import ShowExamSeatPlanPage from '../pages/akademikpersonel/ShowExamSeatPlanPage';
+import AkademikDashboard from '../pages/akademikpersonel/AkademikDash'
+import AkademikPersonelPaneli from '../pages/akademikpersonel/AkademikPersonelPaneli'
+import DersProgrami from '../pages/akademikpersonel/CourseSchedule'
+import SinavProgrami from '../pages/akademikpersonel/ExamSchedule'
+import ShowExamSeatPlanPage from '../pages/akademikpersonel/ShowExamSeatPlanPage'
+import SinavOturmaDuzeni from '../pages/akademikpersonel/OturmaDuzeniGoruntule'
+
 
 /* Sekreter */
 import SekreterDashboard from '../pages/sekreter/SekreterDash';
@@ -67,11 +69,14 @@ function RouterConfig() {
         <Route path="/oturma-duzeni-duzenle/:sinavAltId" element={<OturmaDuzeniDuzenle />} />
         <Route path="/baskan-derslik-detay/:id" element={<BaskanDerslikDetay />} />
 
-        {/* Akademik Personel */}
-        <Route path='/akademik-personel' element={<AkademikDashboard />} />
-        <Route path='/ders-programi' element={<DersProgrami />} />
-        <Route path='/sinav-programi' element={<SinavProgrami />} />
-        <Route path='/sinav-oturma-duzeni-goruntule' element={<ShowExamSeatPlanPage />} />
+            {/* Akademik Personel */}
+            <Route path='/akademik-personel' element={<AkademikDashboard />} />
+            <Route path='/akademik-panel' element={<AkademikPersonelPaneli />} />
+            <Route path='/ders-programi' element={<DersProgrami />} />
+            <Route path='/sinav-programi' element={<SinavProgrami />} />
+            <Route path='/sinav-oturma-duzeni-goruntule' element={<ShowExamSeatPlanPage />} />
+            <Route path="/sinav-oturma-duzeni/:sinavAltId" element={<SinavOturmaDuzeni />} />
+
 
         {/* Sekreter */}
         <Route path='/sekreter' element={<SekreterDashboard />} />
