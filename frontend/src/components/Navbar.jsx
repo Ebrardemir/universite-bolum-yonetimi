@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,19 +9,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import '../css/navbar.css'
-import Logo from '../images/kou.png'
+import '../css/navbar.css';
+import Logo from '../images/kou.png';
 import { Link } from 'react-router-dom';
-
-
-const pages = [
-  { name: 'Anasayfa', path: '/home' },
-  { name: 'Ders Programı', path: '/course-schedule' }
-];
-
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const roleId = localStorage.getItem("rolId");
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -31,10 +25,39 @@ function Navbar() {
     setAnchorElNav(null);
   };
 
+  
+  let pages = [];
+
+  if (roleId === "1") {
+    pages = [
+      { name: 'Anasayfa', path: '/bolum-panel' },
+      { name: 'Ders Programı', path: '/course-schedule' },
+      { name: 'Sınav Programı', path: '/baskan-sinav-programi' },
+      { name: 'Yetkilendirme', path: '/baskan-yetki' },
+      { name: 'Derslik Planı', path: '/course-schedule' }, 
+    ];
+  } else if (roleId === "2") {
+    pages = [
+      { name: 'Anasayfa', path: '/sekreter-panel' },
+      { name: 'Sınav Programı İşlemleri', path: '/sinav-programi-islemleri' },
+      { name: 'Ders Programı', path: '/sinav-programi-liste' },
+    ];
+  } else if (roleId === "3") {
+    pages = [
+      { name: 'Anasayfa', path: '/akademik-panel' },
+      { name: 'Ders Programı', path: '/ders-programi' },
+      { name: 'Sınav Programı', path: '/sinav-programi' },
+    ];
+  } else {
+    pages = [
+      { name: 'Anasayfa', path: '/home' }
+    ];
+  }
+
   return (
     <AppBar position="static" sx={{ backgroundColor: 'gray', width: '100%' }}>
       <Container maxWidth={false} disableGutters sx={{ width: '100%' }}>
-        <Toolbar disableGutters sx={{ minHeight: '80px', padding: 0, margin: 0, width: '100%' }} >
+        <Toolbar disableGutters sx={{ minHeight: '80px', padding: 0, margin: 0, width: '100%' }}>
           <img src={Logo} width={70} height={70} className='logo' />
           <Typography
             variant="h6"
@@ -49,7 +72,7 @@ function Navbar() {
               color: 'inherit',
               textDecoration: 'none',
               padding: '20px 15px 20px 10px',
-              fontSize: '22PX'
+              fontSize: '22px'
             }}
           >
             Kocaeli Üniversitesi
@@ -58,48 +81,36 @@ function Navbar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.name} onClick={handleCloseNavMenu} component={Link}
-                to={page.path}>
-                  <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
+                <MenuItem key={page.name} onClick={handleCloseNavMenu} component={Link} to={page.path}>
+                  <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
+
           <Typography
             variant="h5"
             noWrap
             component={Link}
             to="/home"
             sx={{
-              mr: 25,
+              mr: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'arial',
               fontWeight: 700,
               color: 'inherit',
               textDecoration: 'none',
@@ -108,28 +119,38 @@ function Navbar() {
           >
             KOU
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', gap: 25 } }}>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', gap: 3 } }}>
             {pages.map((page) => (
               <Button
                 key={page.name}
                 component={Link}
                 to={page.path}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block', fontSize: '18px', textTransform: 'none' }}
+                sx={{ my: 2, color: 'white', fontSize: '18px', textTransform: 'none' }}
               >
                 {page.name}
               </Button>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0, ml: 'auto', marginRight: '40px' }}>
-            <Typography sx={{ color: 'white', fontWeight: 500, fontSize: '18px' }}>
-              Ebrar
-            </Typography>
+
+          <Box sx={{ ml: 'auto', mr: '40px' }}>
+            <Button
+              onClick={() => {
+                localStorage.removeItem("rolId");
+                localStorage.removeItem("userId");
+                localStorage.clear();
+                window.location.href = "/login";
+              }}
+              sx={{ color: 'white', fontWeight: 500 }}
+            >
+              Çıkış Yap
+            </Button>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

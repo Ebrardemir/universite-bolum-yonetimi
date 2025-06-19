@@ -8,6 +8,8 @@ import Navbar from './components/Navbar'
 import PageContainer from './container/PageContainer'
 import LessonTableSchedule from './components/LessonTableSchedule'
 import ExamSchedule from './pages/akademikpersonel/ExamSchedule'
+
+
 function App() {
 
   return (

@@ -30,6 +30,13 @@ const AkademikPersonelPaneli = () => {
         navigate('/');
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("rolId");
+        localStorage.removeItem("userId");
+        localStorage.clear();
+        window.location.href = "/login";
+    };
+
     const renderIcerik = () => {
         switch (aktifModul) {
             case 'ders-programi-islemleri':
@@ -71,6 +78,7 @@ const AkademikPersonelPaneli = () => {
                     <li onClick={() => setAktifModul('kullanici-kayit')}>👤 Kullanıcı Ekleme</li>
                     <li onClick={() => setAktifModul('sinav-programi-islemleri')}>📝 Sınav Programı İşlemleri</li>
                     <li onClick={() => setAktifModul('ogretim-elemanlari')}>👨‍🏫 Öğretim Elemanları</li>
+                    <li onClick={handleLogout} style={{ color: 'red', marginTop: '20px' }}>🚪 Çıkış Yap</li>
                 </ul>
             </aside>
             <main className="content-area">

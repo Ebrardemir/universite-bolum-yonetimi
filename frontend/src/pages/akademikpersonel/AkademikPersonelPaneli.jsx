@@ -25,6 +25,12 @@ const AkademikPersonelPaneli = () => {
         localStorage.removeItem('userId');
         navigate('/');
     };
+    const handleLogout = () => {
+        localStorage.removeItem("rolId");
+        localStorage.removeItem("userId");
+        localStorage.clear();
+        window.location.href = "/login";
+    };
 
     const renderIcerik = () => {
         switch (aktifModul) {
@@ -61,6 +67,9 @@ const AkademikPersonelPaneli = () => {
                 <ul>
                     <li onClick={() => setAktifModul('ders-programi')}>📚 Ders Programım</li>
                     <li onClick={() => setAktifModul('sinav-programi')}>📝 Sınav Programım</li>
+                    <li onClick={handleLogout} style={{ color: 'red', marginTop: '20px', cursor: 'pointer' }}>
+                        🚪 Çıkış Yap
+                    </li>
                 </ul>
             </aside>
             <main className="content-area">

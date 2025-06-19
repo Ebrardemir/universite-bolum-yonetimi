@@ -28,6 +28,12 @@ const BolumBaskaniPaneli = () => {
         localStorage.removeItem('userId');
         navigate('/');
     };
+    const handleLogout = () => {
+        localStorage.removeItem("rolId");
+        localStorage.removeItem("userId");
+        localStorage.clear();
+        window.location.href = "/login";
+    };
 
     const renderIcerik = () => {
         switch (aktifModul) {
@@ -66,6 +72,8 @@ const BolumBaskaniPaneli = () => {
                     <li onClick={() => setAktifModul('ders-programi-islemleri')}>📚 Ders Programı</li>
                     <li onClick={() => setAktifModul('sinav-programi')}>📝 Sınav Programı</li>
                     <li onClick={() => setAktifModul('derslik-plan')}>🏫 Derslik Planı</li>
+                    <li onClick={handleLogout} style={{ color: 'red', marginTop: '20px' }}>🚪 Çıkış Yap</li>
+
                 </ul>
             </aside>
             <main className="content-area">{renderIcerik()}</main>
