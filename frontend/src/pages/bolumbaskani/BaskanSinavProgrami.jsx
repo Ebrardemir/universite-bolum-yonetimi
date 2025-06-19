@@ -11,11 +11,30 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const BaskanSinavProgrami = () => {
     const navigate = useNavigate();
+
+    // ✅ Yetki kontrolü için state
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
+    // ✅ Senin mevcut state'lerin
     const [sinavlar, setSinavlar] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hata, setHata] = useState(null);
 
-    // 👉 Ekleme formu için state
     const [gosterInput, setGosterInput] = useState(false);
     const [yeniIsim, setYeniIsim] = useState('');
     const [baslangicTarihi, setBaslangicTarihi] = useState(null);
@@ -23,8 +42,9 @@ const BaskanSinavProgrami = () => {
     const [donem, setDonem] = useState('');
 
     useEffect(() => {
+        if (!yetkiliMi) return;
         fetchSinavlar();
-    }, []);
+    }, [yetkiliMi]);
 
     const fetchSinavlar = () => {
         fetch(`${API_URL}/rest/api/sinav-table/1/getir/list`, {
@@ -81,7 +101,6 @@ const BaskanSinavProgrami = () => {
         navigate(`/sinav-detay/${id}`);
     };
 
-    // 👉 Yeni sınav ekle
     const sinavEkle = async () => {
         try {
             if (!yeniIsim || !baslangicTarihi || !bitisTarihi || !donem) {
@@ -117,6 +136,18 @@ const BaskanSinavProgrami = () => {
             console.error('Sınav eklenemedi:', error);
         }
     };
+
+    // ✅ Yetkisizse uyarı ve buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
+                <button onClick={handleLogoutAndRedirect} style={{ padding: '10px 20px', marginTop: '20px' }}>
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     if (loading) return <p>Yükleniyor...</p>;
     if (hata) return <p>Hata: {hata}</p>;

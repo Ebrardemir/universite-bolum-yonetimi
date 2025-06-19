@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DtoDersProgramiIcerikWithDetails {
 
+    private Integer id;
     private Integer gorevliId;
     private Integer derslikId;
     private Integer dersId;
@@ -23,4 +24,7 @@ public class DtoDersProgramiIcerikWithDetails {
     private String isim;
     private String soyisim;
     private String derslikAdi;
+    private Integer alanKisiSayisi;
+    private Integer kapasite;
+
 }

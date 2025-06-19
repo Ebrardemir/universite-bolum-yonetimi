@@ -60,7 +60,7 @@ function LessonTable() {
                     readonly: true,
                     text: {
                         dersAdi: entry.dersAdi,
-                        alanKisiSayisi: entry.saatSayisi ?? 1,
+                        alanKisiSayisi: entry.alanKisiSayisi ?? 0,
                         id: entry.dersId,
                         icerikId: entry.id // ✅ backend içerik id
                     }
@@ -85,7 +85,7 @@ function LessonTable() {
                     readonly: true,
                     text: {
                         derslikAdi: entry.derslikAdi,
-                        kapasite: 50,
+                        kapasite: entry.kapasite,
                         id: entry.derslikId,
                         icerikId: entry.id
                     }

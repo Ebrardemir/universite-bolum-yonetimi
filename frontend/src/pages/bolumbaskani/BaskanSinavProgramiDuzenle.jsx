@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,12 +13,32 @@ const hours = Array.from({ length: 13 }, (_, i) => {
 });
 
 function SinavProgrami() {
+
+    const navigate = useNavigate();
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1 || rolId == 2) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
     const { sinavId } = useParams();
     const [schedule, setSchedule] = useState({});
     const [sinavlar, setSinavlar] = useState([]);
     const [gozetmenler, setGozetmenler] = useState([]);
     const [derslikler, setDerslikler] = useState([]);
     const [weekChunks, setWeekChunks] = useState([]);
+
 
     const generateWeekChunks = (startDate, endDate) => {
         const result = [];
@@ -113,7 +135,7 @@ function SinavProgrami() {
         };
 
         fetchData();
-    }, []);
+    }, [yetkiliMi]);
 
     const handleDrop = (e, date, hour) => {
         e.preventDefault();
@@ -205,7 +227,7 @@ function SinavProgrami() {
             });
 
             alert("Tüm sınav programı silindi.");
-            setSchedule({}); 
+            setSchedule({});
         } catch (err) {
             console.error("Silme hatası:", err);
             alert("Silme işlemi sırasında bir hata oluştu.");
@@ -254,6 +276,17 @@ function SinavProgrami() {
         verticalAlign: 'top',
         minWidth: '120px'
     };
+
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için sekreter veya bölüm başkanı olarak giriş yapmalısınız.</h2>
+                <button onClick={handleLogoutAndRedirect} style={{ padding: '10px 20px', marginTop: '20px' }}>
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>

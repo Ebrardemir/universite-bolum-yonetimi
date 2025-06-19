@@ -25,6 +25,9 @@ public class not {
     @Column(name="sinav_id")
     private Integer sinavId;
 
+    @Column(name="ders_programi_icerik_id")
+    private Integer dersProgramiIcerikId;
+
     @Column(name="gorevli_id")
     private Integer gorevliId;
 

@@ -12,7 +12,7 @@ const hours = Array.from({ length: 9 }, (_, i) => {
 
 const LessonTableSchedule = () => {
     const [schedule, setSchedule] = useState({});
-    const görevliId = 3;
+    const görevliId = Number(localStorage.getItem('userId'));
 
     useEffect(() => {
         const fetchSchedule = async () => {

@@ -8,10 +8,31 @@ const API_URL = import.meta.env.VITE_API_URL;
 const BaskanSinavDetay = () => {
     const { sinavId } = useParams();
     const navigate = useNavigate();
+
+    // ✅ Yetki kontrolü için state
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
     const [veriler, setVeriler] = useState([]);
     const [hata, setHata] = useState(null);
 
     useEffect(() => {
+        if (!yetkiliMi) return;
+
         axios
             .get(`${API_URL}/rest/api/sinav/${sinavId}/listele`, {
                 headers: { "ngrok-skip-browser-warning": "69420" },
@@ -21,7 +42,7 @@ const BaskanSinavDetay = () => {
                 console.error(err);
                 setHata("Veri çekilemedi.");
             });
-    }, [sinavId]);
+    }, [sinavId, yetkiliMi]);
 
     const handleGenelDuzenle = () => {
         navigate(`/sinav-programi/${sinavId}`);
@@ -45,6 +66,21 @@ const BaskanSinavDetay = () => {
             alert("Oluşturma başarısız.");
         }
     };
+
+    // ✅ Yetkisizse uyarı ve buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
+                <button
+                    onClick={handleLogoutAndRedirect}
+                    style={{ padding: '10px 20px', marginTop: '20px' }}
+                >
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     if (hata) return <p className="error-message">{hata}</p>;
     if (!veriler.length) return <p className="loading-message">Yükleniyor...</p>;

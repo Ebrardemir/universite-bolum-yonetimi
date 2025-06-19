@@ -1,14 +1,38 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ navigate için ekledik
 import '../../css/bolumbaskani/kullaniciYetkilendirme.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const KullaniciYetkilendirme = () => {
+    const navigate = useNavigate(); // ✅ navigate hazır
+
+    // ✅ Yetki kontrolü için state
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
+    // ✅ Mevcut state'ler
     const [users, setUsers] = useState([]);
     const [roller, setRoller] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
 
     useEffect(() => {
+        if (!yetkiliMi) return;
+
         // Kullanıcıları çek
         fetch(`${API_URL}/rest/api/gorevli/1/list-getir`, {
             headers: { 'ngrok-skip-browser-warning': '69420' }
@@ -24,14 +48,13 @@ const KullaniciYetkilendirme = () => {
             .then(res => res.json())
             .then(data => setRoller(data))
             .catch(err => console.error("Roller alınamadı:", err));
-    }, []);
+    }, [yetkiliMi]);
 
     const handleRolGuncelle = (userId, yeniRolId) => {
         fetch(`${API_URL}/rest/api/gorevli/guncelle/rol`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-
                 "ngrok-skip-browser-warning": "69420"
             },
             body: JSON.stringify({ id: userId, rolId: yeniRolId })
@@ -44,6 +67,18 @@ const KullaniciYetkilendirme = () => {
             })
             .catch(err => alert("Hata: " + err.message));
     };
+
+    // ✅ Yetkisizse uyarı ve buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
+                <button onClick={handleLogoutAndRedirect} style={{ padding: '10px 20px', marginTop: '20px' }}>
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="kullanici-yonetimi-container">

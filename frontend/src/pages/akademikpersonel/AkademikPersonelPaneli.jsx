@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/akademikpersonel/panel.css';
 import logo from '../../images/kou.png';
@@ -7,18 +7,50 @@ import ExamSchedule from './ExamSchedule';
 
 const AkademikPersonelPaneli = () => {
     const [aktifModul, setAktifModul] = useState();
+    const [yetkiliMi, setYetkiliMi] = useState(false);
     const navigate = useNavigate();
+
+    // ✅ Yetki kontrolü
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 3) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
 
     const renderIcerik = () => {
         switch (aktifModul) {
-
             case 'ders-programi':
-                return <CourseSchedule />
+                return <CourseSchedule />;
             case 'sinav-programi':
-                return <ExamSchedule />
-
+                return <ExamSchedule />;
+            default:
+                return null;
         }
     };
+
+    // ✅ Yetkisizse uyarı + buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için öğretim elemanı girişi yapmalısınız.</h2>
+                <button
+                    onClick={handleLogoutAndRedirect}
+                    style={{ padding: '10px 20px', marginTop: '20px' }}
+                >
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="panel-container">
@@ -30,7 +62,6 @@ const AkademikPersonelPaneli = () => {
                     <li onClick={() => setAktifModul('ders-programi')}>📚 Ders Programım</li>
                     <li onClick={() => setAktifModul('sinav-programi')}>📝 Sınav Programım</li>
                 </ul>
-
             </aside>
             <main className="content-area">
                 {renderIcerik()}

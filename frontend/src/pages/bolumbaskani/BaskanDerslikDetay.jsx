@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // ✅ navigate eklendi
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,10 +13,32 @@ const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 
 export default function BaskanDerslikDetay() {
     const { id } = useParams();
+    const navigate = useNavigate();
+
+    // ✅ Yetki kontrolü için state
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
     const [data, setData] = useState([]);
     const [derslikAdi, setDerslikAdi] = useState('');
 
     useEffect(() => {
+        if (!yetkiliMi) return;
+
         const fetchDetails = async () => {
             try {
                 const response = await fetch(`${API_URL}/rest/api/ders-programi-icerik/derslik-programi/${id}`, {
@@ -34,7 +56,7 @@ export default function BaskanDerslikDetay() {
             }
         };
         fetchDetails();
-    }, [id]);
+    }, [id, yetkiliMi]);
 
     const schedule = {};
     data.forEach(item => {
@@ -50,8 +72,23 @@ export default function BaskanDerslikDetay() {
         padding: '10px',
         minWidth: '150px',
         verticalAlign: 'top',
-        textAlign: 'center' // 📌 ORTALA
+        textAlign: 'center'
     };
+
+    // ✅ Yetkisizse uyarı ve buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
+                <button
+                    onClick={handleLogoutAndRedirect}
+                    style={{ padding: '10px 20px', marginTop: '20px' }}
+                >
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div style={{ padding: '20px' }}>

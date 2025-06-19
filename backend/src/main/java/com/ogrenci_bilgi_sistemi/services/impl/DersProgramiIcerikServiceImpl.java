@@ -132,11 +132,19 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     .map(Ders::getDersAdi)
                     .orElse("Ders Adı Bulunamadı");
 
+            Integer alanKisiSayisi = dersRepository.findById(icerik.getDersId())
+                    .map(Ders::getAlanKisiSayisi).orElse(0);
+
             String derslikAdi = derslikRepository.findById(icerik.getDerslikId())
                     .map(d -> d.getDerslikAdi())
                     .orElse("Derslik Bulunamadı");
 
+            Integer kapasite = derslikRepository.findById(icerik.getDerslikId())
+                    .map(d -> d.getKapasite())
+                    .orElse(0);
+
             DtoDersProgramiIcerikWithDetails dto = new DtoDersProgramiIcerikWithDetails(
+                    icerik.getId(),
                     icerik.getGorevliId(),
                     icerik.getDerslikId(),
                     icerik.getDersId(),
@@ -148,7 +156,9 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     gorevli.getUnvan(),
                     gorevli.getIsim(),
                     gorevli.getSoyisim(),
-                    derslikAdi
+                    derslikAdi,
+                    alanKisiSayisi,
+                    kapasite
             );
 
             dtoList.add(dto);
@@ -175,6 +185,9 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     .map(Ders::getDersAdi)
                     .orElse("Ders Adı Bulunamadı");
 
+            Integer alanKisiSayisi = dersRepository.findById(icerik.getDersId())
+                    .map(Ders::getAlanKisiSayisi).orElse(0);
+
             String unvan = "", isim = "", soyisim = "";
             Optional<gorevli> gOpt = gorevliRepository.findById(icerik.getGorevliId());
             if (gOpt.isPresent()) {
@@ -191,7 +204,12 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     .map(d -> d.getDerslikAdi())
                     .orElse("Derslik Bulunamadı");
 
+            Integer kapasite = derslikRepository.findById(icerik.getDerslikId())
+                    .map(d -> d.getKapasite())
+                    .orElse(0);
+
             DtoDersProgramiIcerikWithDetails dto = new DtoDersProgramiIcerikWithDetails(
+                    icerik.getId(),
                     icerik.getGorevliId(),
                     icerik.getDerslikId(),
                     icerik.getDersId(),
@@ -203,7 +221,9 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     unvan,
                     isim,
                     soyisim,
-                    derslikAdi
+                    derslikAdi,
+                    alanKisiSayisi,
+                    kapasite
             );
 
             dtoList.add(dto);
@@ -223,6 +243,9 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     .map(Ders::getDersAdi)
                     .orElse("Ders Adı Bulunamadı");
 
+            Integer alanKisiSayisi = dersRepository.findById(icerik.getDersId())
+                    .map(Ders::getAlanKisiSayisi).orElse(0);
+
             String unvan = "", isim = "", soyisim = "";
             Optional<gorevli> gOpt = gorevliRepository.findById(icerik.getGorevliId());
             if (gOpt.isPresent()) {
@@ -239,7 +262,12 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     .map(d -> d.getDerslikAdi())
                     .orElse("Derslik Bulunamadı");
 
+            Integer kapasite = derslikRepository.findById(icerik.getDerslikId())
+                    .map(d -> d.getKapasite())
+                    .orElse(0);
+
             return new DtoDersProgramiIcerikWithDetails(
+                    icerik.getId(),
                     icerik.getGorevliId(),
                     icerik.getDerslikId(),
                     icerik.getDersId(),
@@ -251,7 +279,9 @@ public class DersProgramiIcerikServiceImpl implements IDersProgramiIcerikService
                     unvan,
                     isim,
                     soyisim,
-                    derslikAdi
+                    derslikAdi,
+                    alanKisiSayisi,
+                    kapasite
             );
         }).collect(Collectors.toList());
     }

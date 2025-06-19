@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,11 +12,33 @@ const hours = Array.from({ length: 13 }, (_, i) => {
 
 export default function DersProgramiGoruntule() {
     const { id } = useParams();
+    const navigate = useNavigate();
+
+    // ✅ Yetki kontrolü
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1 || rolId === 2) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
     const [programContents, setProgramContents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [schedule, setSchedule] = useState({});
 
     useEffect(() => {
+        if (!yetkiliMi) return;
+
         const fetchProgram = async () => {
             setLoading(true);
             try {
@@ -34,7 +56,7 @@ export default function DersProgramiGoruntule() {
         };
 
         fetchProgram();
-    }, [id]);
+    }, [id, yetkiliMi]);
 
     useEffect(() => {
         if (!programContents || programContents.length === 0) {
@@ -71,6 +93,18 @@ export default function DersProgramiGoruntule() {
 
         setSchedule(converted);
     }, [programContents]);
+
+    // ✅ Yetkisizse uyarı + buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için yetkili giriş yapmalısınız.</h2>
+                <button onClick={handleLogoutAndRedirect} style={{ padding: '10px 20px', marginTop: '20px' }}>
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div style={{ padding: '20px' }}>

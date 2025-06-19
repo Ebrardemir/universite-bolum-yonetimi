@@ -5,6 +5,26 @@ import { useNavigate } from 'react-router-dom';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const BaskanDerslikPlan = () => {
+    const navigate = useNavigate();
+
+    // ✅ Yetki kontrolü için state
+    const [yetkiliMi, setYetkiliMi] = useState(false);
+
+    useEffect(() => {
+        const rolId = Number(localStorage.getItem('rolId'));
+        if (rolId === 1) {
+            setYetkiliMi(true);
+        } else {
+            setYetkiliMi(false);
+        }
+    }, []);
+
+    const handleLogoutAndRedirect = () => {
+        localStorage.removeItem('rolId');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
     const [derslikler, setDerslikler] = useState([]);
     const bolumId = 1; // Sabit
 
@@ -23,18 +43,25 @@ const BaskanDerslikPlan = () => {
     };
 
     useEffect(() => {
+        if (!yetkiliMi) return;
         fetchDerslikler();
-    }, []);
-
-
-
-    // üstte ekle
-    const navigate = useNavigate();
+    }, [yetkiliMi]);
 
     const handleDetay = (derslikId) => {
         navigate(`/baskan-derslik-detay/${derslikId}`);
     };
 
+    // ✅ Yetkisizse uyarı ve buton
+    if (!yetkiliMi) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
+                <button onClick={handleLogoutAndRedirect} style={{ padding: '10px 20px', marginTop: '20px' }}>
+                    Girişe Git
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="baskan-derslik-container">
@@ -54,7 +81,6 @@ const BaskanDerslikPlan = () => {
                             <td>{d.kapasite}</td>
                             <td>
                                 <button onClick={() => handleDetay(d.id)}>Detay</button>
-
                             </td>
                         </tr>
                     ))}
