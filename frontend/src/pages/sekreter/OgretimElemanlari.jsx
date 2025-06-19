@@ -57,24 +57,48 @@ const OgretimElemanlari = () => {
         const table = tableRef.current;
 
         html2canvas(table, {
-            scale: 2,            // yeterli çözünürlük, çok büyük değil
+            scale: 2,
             useCORS: true,
-            backgroundColor: '#ffffff'  // arka plan tam beyaz olsun
+            backgroundColor: '#ffffff'
         }).then(canvas => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.92); // iyi kalite, düşük boyut
+            const imgData = canvas.toDataURL('image/jpeg', 0.92);
             const pdf = new jsPDF('landscape', 'mm', 'a4');
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();   // 297mm
-            const pdfHeight = pdf.internal.pageSize.getHeight(); // 210mm
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
 
             const imgWidth = pdfWidth;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-            const yOffset = (pdfHeight - imgHeight) / 2; // dikey ortalama
+            const yOffset = (pdfHeight - imgHeight) / 2;
 
             pdf.addImage(imgData, 'JPEG', 0, yOffset > 0 ? yOffset : 0, imgWidth, imgHeight);
             pdf.save(`${selectedGorevli.unvan}_${selectedGorevli.isim}_${selectedGorevli.soyisim}_Program.pdf`);
         });
+    };
+
+    const handlePrint = () => {
+        const printWindow = window.open('', '', 'width=900,height=600');
+        printWindow.document.write('<html><head><title>Kapı İsimliği</title>');
+        printWindow.document.write(`
+        <style>
+            body { margin: 0; padding: 0; }
+            table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+            th, td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                word-break: break-word;
+                text-align: center;
+                max-width: 120px;
+            }
+            button { display: none !important; }
+        </style>
+    `);
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(tableRef.current.outerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
     };
 
 
@@ -157,6 +181,9 @@ const OgretimElemanlari = () => {
                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                         <button onClick={exportToPDF} style={buttonStyle}>
                             PDF Olarak Kaydet
+                        </button>
+                        <button onClick={handlePrint} style={{ ...buttonStyle, marginLeft: '10px', backgroundColor: 'green' }}>
+                            Kapı İsimliği Yazdır
                         </button>
                     </div>
                 </>

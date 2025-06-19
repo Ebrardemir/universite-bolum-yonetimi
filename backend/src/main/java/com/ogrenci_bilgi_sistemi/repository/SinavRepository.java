@@ -52,4 +52,6 @@ public interface SinavRepository extends JpaRepository<sinav, Integer> {
     List<sinav> findBySinavId(Integer sinavId);
 
     void deleteBySinavId(Integer sinavId);
+
+    List<sinav> findByGozetmenId(Integer gozetmenId);
 }

@@ -11,4 +11,7 @@ import com.ogrenci_bilgi_sistemi.entities.not;
 public interface NotRepository extends JpaRepository<not, Integer>{
 
     List<not> findBySinavId(Integer sinavId);
+
+    List<not> findByDersProgramiIcerikId(Integer dersProgramiIcerikId);
+
 }

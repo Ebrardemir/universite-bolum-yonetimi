@@ -16,4 +16,6 @@ public class DtoNot {
     private Integer gorevliId;
 
     private String gorevliNot;
+
+    private Integer dersProgramiIcerikId;
 }

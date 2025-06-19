@@ -7,7 +7,13 @@ import com.ogrenci_bilgi_sistemi.dto.DtoIU.DtoNotIU;
 
 public interface INotController {
 
-    public DtoNot notSave(DtoNotIU dtoNotIU);
+    public DtoNot notSaveSinav(DtoNotIU dtoNotIU);
 
-    public List<DtoNot> notGetir(Integer sinavId);
+    public List<DtoNot> notGetirSinav(Integer sinavId);
+
+    public DtoNot notSaveDersProgrami(DtoNotIU dtoNotIU);
+
+    public DtoNot notGuncelle(Integer id, DtoNotIU dtoNotIU);
+
+    public List<DtoNot> notGetirDersProgrami(Integer dersProgramiId);
 }

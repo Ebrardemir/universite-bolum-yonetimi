@@ -12,4 +12,6 @@ public interface ISinavService {
     public List<DtoSinav> sinavListele(Integer sinavId);
 
     public void sinavListTemizle(Integer sinavId);
+
+    public List<DtoSinav> sinavListByGozetmenId(Integer gozetmenId);
 }

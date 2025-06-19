@@ -3,12 +3,7 @@ package com.ogrenci_bilgi_sistemi.controller.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ogrenci_bilgi_sistemi.controller.Icontroller.INotController;
 import com.ogrenci_bilgi_sistemi.dto.DTO.DtoNot;
@@ -22,17 +17,35 @@ public class NotControllerImpl implements INotController{
     @Autowired
     private INotService notService;
 
-    @PostMapping(path="save")
+    @PostMapping(path="save/sinav")
     @Override
-    public DtoNot notSave(@RequestBody DtoNotIU dtoNotIU) {
-        return notService.notSave(dtoNotIU);
+    public DtoNot notSaveSinav(@RequestBody DtoNotIU dtoNotIU) {
+        return notService.notSaveSinav(dtoNotIU);
     }
 
-    @GetMapping(path="{sinavId}/getir")
+    @GetMapping(path="{sinavId}/getir-sinav")
     @Override
-    public List<DtoNot> notGetir(@PathVariable(name="sinavId") Integer sinavId) {
-        return notService.notGetir(sinavId);
+    public List<DtoNot> notGetirSinav(@PathVariable(name="sinavId") Integer sinavId) {
+        return notService.notGetirSinav(sinavId);
     }
 
-    
+    @PostMapping(path="save/ders-programi")
+    @Override
+    public DtoNot notSaveDersProgrami(@RequestBody DtoNotIU dtoNotIU) {
+        return notService.notSaveDersProgrami(dtoNotIU);
+    }
+
+    @PutMapping(path="{notId}/guncelle")
+    @Override
+    public DtoNot notGuncelle(@PathVariable(name="notId") Integer id,@RequestBody DtoNotIU dtoNotIU) {
+        return notService.notGuncelle(id, dtoNotIU);
+    }
+
+    @GetMapping(path="{dersProgramiId}/getir-ders-programi")
+    @Override
+    public List<DtoNot> notGetirDersProgrami(@PathVariable(name="dersProgramiId") Integer dersProgramiId) {
+        return notService.notGetirDersProgrami(dersProgramiId);
+    }
+
+
 }

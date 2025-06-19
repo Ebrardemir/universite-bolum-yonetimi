@@ -25,6 +25,7 @@ import AkademikPersonelPaneli from '../pages/akademikpersonel/AkademikPersonelPa
 import DersProgrami from '../pages/akademikpersonel/CourseSchedule'
 import SinavProgrami from '../pages/akademikpersonel/ExamSchedule'
 import ShowExamSeatPlanPage from '../pages/akademikpersonel/ShowExamSeatPlanPage'
+import SinavOturmaDuzeni from '../pages/akademikpersonel/OturmaDuzeniGoruntule'
 
 /* Sekreter */
 import SekreterDashboard from '../pages/sekreter/SekreterDash'
@@ -64,6 +65,8 @@ function RouterConfig() {
             <Route path='/ders-programi' element={<DersProgrami />} />
             <Route path='/sinav-programi' element={<SinavProgrami />} />
             <Route path='/sinav-oturma-duzeni-goruntule' element={<ShowExamSeatPlanPage />} />
+            <Route path="/sinav-oturma-duzeni/:sinavAltId" element={<SinavOturmaDuzeni />} />
+
 
             {/* Sekreter */}
             <Route path='/sekreter' element={<SekreterDashboard />} />

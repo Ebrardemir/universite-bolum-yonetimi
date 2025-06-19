@@ -16,4 +16,5 @@ public class DtoNotIU {
 
     private String gorevliNot;
 
+    private Integer dersProgramiIcerikId;
 }

@@ -55,4 +55,10 @@ public class SinavControllerImpl implements ISinavController{
         sinavService.sinavListTemizle(sinavId);
     }
 
+    @GetMapping(path="{gozetmenId}/listele-gozetmen")
+    @Override
+    public List<DtoSinav> sinavListByGozetmenId(@PathVariable(name="gozetmenId") Integer gozetmenId) {
+        return sinavService.sinavListByGozetmenId(gozetmenId);
+    }
+
 }
