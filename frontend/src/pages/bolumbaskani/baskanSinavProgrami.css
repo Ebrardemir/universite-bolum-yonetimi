@@ -93,3 +93,15 @@
     color: #663399;
     border: 1px solid #cc99ff;
 }
+.pdf-btn {
+    background-color: #6c63ff;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.pdf-btn:hover {
+    background-color: #5548e0;
+}

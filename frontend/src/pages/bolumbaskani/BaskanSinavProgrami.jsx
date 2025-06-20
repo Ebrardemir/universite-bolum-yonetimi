@@ -219,10 +219,12 @@ const BaskanSinavProgrami = () => {
                             <td>{s.donem}</td>
                             <td>{s.onay === 1 ? "Onaylandı" : "Bekliyor"}</td>
                             <td>
-                                <button className="onayla-btn" onClick={() => handleOnayla(s.sinavId)}>Onayla</button>
-                                <button className="duzenle-btn" onClick={() => handleDuzenle(s.sinavId)}>Düzenle</button>
-                                <button className="detay-btn" onClick={() => handleDetay(s.sinavId)}>İçeriği Görüntüle</button>
-                            </td>
+    {s.onay !== 1 && (
+        <button className="onayla-btn" onClick={() => handleOnayla(s.sinavId)}>Onayla</button>
+    )}
+    <button className="duzenle-btn" onClick={() => handleDuzenle(s.sinavId)}>Düzenle</button>
+    <button className="detay-btn" onClick={() => handleDetay(s.sinavId)}>İçeriği Görüntüle</button>
+</td>
                         </tr>
                     ))}
                 </tbody>

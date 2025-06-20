@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import jsPDF from "jspdf";
+import "jspdf-autotable"; // Tablo için
 import "../../css/bolumbaskani/baskanSinavProgrami.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -87,14 +89,39 @@ const BaskanSinavDetay = () => {
         setActiveNoteText("");
     };
 
+    const handleGenelPdfOlustur = () => {
+        const doc = new jsPDF();
+        doc.setFontSize(14);
+        doc.text(`Sınav Programı – ID: ${sinavId}`, 14, 15);
+
+        const tableColumn = ["Ders", "Tarih / Saat", "Gözetmen", "Derslik(ler)"];
+        const tableRows = [];
+
+        veriler.forEach((item) => {
+            const ders = item.ders?.dersAdi || "—";
+            const tarihSaat = `${item.sinavTarih}\n${item.baslangicSaati} - ${item.bitisSaati}`;
+            const gorevli = item.gorevli
+                ? `${item.gorevli.unvan} ${item.gorevli.isim} ${item.gorevli.soyisim}`
+                : `Gözetmen ID: ${item.gozetmenId}`;
+            const derslik = item.derslikler?.map(d => d.derslikAdi || `ID: ${d.id}`).join(", ") || "—";
+
+            tableRows.push([ders, tarihSaat, gorevli, derslik]);
+        });
+
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 25,
+        });
+
+        doc.save(`sinav_programi_${sinavId}.pdf`);
+    };
+
     if (!yetkiliMi) {
         return (
             <div style={{ textAlign: "center", marginTop: "100px" }}>
                 <h2>Bu sayfaya erişmek için bölüm başkanı girişi yapmalısınız.</h2>
-                <button
-                    onClick={handleLogoutAndRedirect}
-                    style={{ padding: "10px 20px", marginTop: "20px" }}
-                >
+                <button onClick={handleLogoutAndRedirect} style={{ padding: "10px 20px", marginTop: "20px" }}>
                     Girişe Git
                 </button>
             </div>
@@ -106,7 +133,10 @@ const BaskanSinavDetay = () => {
 
     return (
         <div className="baskan-sinav-container">
-            <h2>Sınav İçeriği – Sınav ID: {sinavId}</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2>Sınav İçeriği – Sınav ID: {sinavId}</h2>
+                <button onClick={handleGenelPdfOlustur} className="pdf-btn">📄 PDF Çıktısı Al</button>
+            </div>
 
             <div className="action-buttons">
                 <button className="duzenle-btn" onClick={handleGenelDuzenle}>
@@ -148,32 +178,15 @@ const BaskanSinavDetay = () => {
                                     : "—"}
                             </td>
                             <td>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        flexWrap: "wrap",
-                                        gap: "10px",
-                                    }}
-                                >
-                                    <button
-                                        className="oturma-btn"
-                                        onClick={() => handleOturmaDuzeni(item.id)}
-                                    >
+                                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                                    <button className="oturma-btn" onClick={() => handleOturmaDuzeni(item.id)}>
                                         🪑 Planı Düzenle
                                     </button>
-                                    <button
-                                        className="otomatik-btn"
-                                        onClick={() => handleOtomatikOlustur(item.id)}
-                                    >
+                                    <button className="otomatik-btn" onClick={() => handleOtomatikOlustur(item.id)}>
                                         🧠 Otomatik Oluştur
                                     </button>
                                     {notMap[item.id] && (
-                                        <button
-                                            className="not-btn"
-                                            onClick={() => openNoteModal(item.id)}
-                                        >
+                                        <button className="not-btn" onClick={() => openNoteModal(item.id)}>
                                             📄 Notu Görüntüle
                                         </button>
                                     )}
