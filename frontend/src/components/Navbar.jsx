@@ -41,8 +41,8 @@ function Navbar() {
       { name: 'Anasayfa', path: '/sekreter-panel' },
       { name: 'Ders Programı İşlemleri', path: '/ders-programi-listesi' },
       { name: 'Kullanıcı Ekleme', path: '/kullanici-kayit' },
-      { name: 'Sınav Programı İşlemleri', path: '/sinav-programi-islemleri' },
-      { name: 'Öğretim Elemanları', path: '/sinav-programi-liste' },
+      { name: 'Sınav Programı İşlemleri', path: '/sinav-programi-liste' },
+      { name: 'Öğretim Elemanları', path: '/ogretim-elemani-liste' },
     ];
   } else if (roleId === "3") {
     pages = [

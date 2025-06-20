@@ -40,6 +40,7 @@ import SinavProgramiListe from '../pages/sekreter/sinavProgramiListe';
 import DersProgramiGoruntule from '../pages/sekreter/DersProgramiGoruntule';
 import DersProgramiList from '../pages/sekreter/DersProgramiList';
 import BaskanDerslikPlan from '../pages/bolumbaskani/BaskanDerslikPlan';
+import OgretimElemanlari from '../pages/sekreter/OgretimElemanlari';
 
 
 
@@ -93,6 +94,8 @@ function RouterConfig() {
         <Route path='/sinav-programi-liste' element={<SinavProgramiListe />} />
         <Route path='/sinav-programi/:sinavId' element={<SinavProgramiDetay />} />
         <Route path='/ders-programi-goruntule/:id' element={<DersProgramiGoruntule />} />
+        <Route path="/ogretim-elemani-liste" element={<OgretimElemanlari />} />
+        
       </Route>
     </Routes>
   );
