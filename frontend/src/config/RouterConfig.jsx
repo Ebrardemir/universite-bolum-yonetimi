@@ -38,6 +38,9 @@ import SinavProgramiIslemleri from '../pages/sekreter/sinavProgrami';
 import SinavProgramiDetay from '../pages/sekreter/sinavProgrami';
 import SinavProgramiListe from '../pages/sekreter/sinavProgramiListe';
 import DersProgramiGoruntule from '../pages/sekreter/DersProgramiGoruntule';
+import DersProgramiList from '../pages/sekreter/DersProgramiList';
+import BaskanDerslikPlan from '../pages/bolumbaskani/BaskanDerslikPlan';
+
 
 
 function RouterConfig() {
@@ -62,6 +65,10 @@ function RouterConfig() {
         <Route path="/baskan-sinav-oturma-duzeni-goruntule" element={<ShowExamSeatPlanPageBaskan />} />
         <Route path="/baskan" element={<BaskanDashboard />} />
         <Route path="/baskan-yetki" element={<KullaniciYetkilendirme />} />
+        <Route path="/ders-programi-listesi" element={<DersProgramiList />} />
+
+        <Route path="/baskan-derslik-plan" element={<BaskanDerslikPlan />} />
+
        
         <Route path="/baskan-sinav-programi" element={<BaskanSinavProgrami />} />
         <Route path="/sinav-programi/:sinavId" element={<BaskanSinavDuzenle />} />

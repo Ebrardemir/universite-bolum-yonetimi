@@ -31,16 +31,18 @@ function Navbar() {
   if (roleId === "1") {
     pages = [
       { name: 'Anasayfa', path: '/bolum-panel' },
-      { name: 'Ders Programı', path: '/course-schedule' },
+      { name: 'Ders Programı', path: '/ders-programi-listesi' },
       { name: 'Sınav Programı', path: '/baskan-sinav-programi' },
       { name: 'Yetkilendirme', path: '/baskan-yetki' },
-      { name: 'Derslik Planı', path: '/course-schedule' }, 
+      { name: 'Derslik Planı', path: '/baskan-derslik-plan' },
     ];
   } else if (roleId === "2") {
     pages = [
       { name: 'Anasayfa', path: '/sekreter-panel' },
+      { name: 'Ders Programı İşlemleri', path: '/ders-programi-listesi' },
+      { name: 'Kullanıcı Ekleme', path: '/kullanici-kayit' },
       { name: 'Sınav Programı İşlemleri', path: '/sinav-programi-islemleri' },
-      { name: 'Ders Programı', path: '/sinav-programi-liste' },
+      { name: 'Öğretim Elemanları', path: '/sinav-programi-liste' },
     ];
   } else if (roleId === "3") {
     pages = [
